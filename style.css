@@ -961,7 +961,7 @@ input, textarea, select {
 /* Ultra-wide screens */
 @media (min-width: 1600px) {
     .container {
-        max-width: 1600px;
+        max-width: 1400px;
     }
     
     .main-content {
