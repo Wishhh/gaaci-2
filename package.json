@@ -1,0 +1,39 @@
+{
+  "name": "gaaci-website",
+  "version": "1.0.0",
+  "description": "Georgian Association of Allergology and Clinical Immunology (GAACI) - Official Website",
+  "main": "index.html",
+  "scripts": {
+    "start": "python -m http.server 8000",
+    "serve": "npx http-server -p 8000",
+    "dev": "npx live-server --port=8000"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Wishhh/gaaci-2.git"
+  },
+  "homepage": "https://wishhh.github.io/gaaci-2/",
+  "keywords": [
+    "gaaci",
+    "allergology",
+    "immunology",
+    "georgia",
+    "medical",
+    "association",
+    "bilingual",
+    "responsive",
+    "theme-changer"
+  ],
+  "author": "GAACI - Georgian Association of Allergology and Clinical Immunology",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Wishhh/gaaci-2/issues"
+  },
+  "devDependencies": {
+    "http-server": "^14.1.1",
+    "live-server": "^1.2.2"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  }
+}
