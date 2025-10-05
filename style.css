@@ -115,7 +115,7 @@ strong, b {
 }
 
 .container {
-    max-width: 1200px;
+    max-width: 1400px;
     margin: 0 auto;
     background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-gradient-middle) 50%, var(--bg-gradient-end) 100%);
     min-height: 100vh;
@@ -967,4 +967,297 @@ input, textarea, select {
     .main-content {
         padding: 0 50px 50px;
     }
+}
+
+/* Enhanced Loading States */
+.loading {
+    opacity: 0.7;
+    pointer-events: none;
+}
+
+.loading::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 20px;
+    height: 20px;
+    margin: -10px 0 0 -10px;
+    border: 2px solid var(--accent-yellow);
+    border-top: 2px solid transparent;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Enhanced Button States */
+button:active,
+.language-toggle:active,
+.theme-toggle:active {
+    transform: scale(0.95);
+}
+
+/* Improved Text Selection */
+::selection {
+    background: var(--accent-yellow);
+    color: #000000;
+}
+
+::-moz-selection {
+    background: var(--accent-yellow);
+    color: #000000;
+}
+
+/* Enhanced Scrollbar Styling */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--card-bg);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--accent-yellow);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--accent-cyan);
+}
+
+/* Enhanced Focus Management */
+.sidebar-item:focus,
+.header-nav a:focus,
+.footer-links a:focus {
+    outline: 2px solid var(--accent-yellow);
+    outline-offset: 2px;
+}
+
+/* Improved Touch Targets */
+@media (hover: none) and (pointer: coarse) {
+    .sidebar-item,
+    .header-nav a,
+    .language-toggle,
+    .theme-toggle {
+        min-height: 44px;
+        min-width: 44px;
+    }
+}
+
+/* Enhanced Animation Performance */
+.event-block,
+.event-item,
+.sidebar-item,
+.section-item {
+    will-change: transform;
+}
+
+/* Better Color Contrast */
+@media (prefers-contrast: high) {
+    .event-title,
+    .section-title,
+    .organization-title {
+        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+    }
+}
+
+/* Enhanced Mobile Experience */
+@media (max-width: 768px) {
+    .container {
+        min-height: 100vh;
+        min-height: 100dvh; /* Dynamic viewport height */
+    }
+    
+    .main-content {
+        padding: 0 20px 20px;
+    }
+    
+    .header {
+        padding: 15px 20px;
+    }
+    
+    .event-block,
+    .event-item {
+        margin-bottom: 15px;
+    }
+}
+
+/* Improved Typography Scaling */
+@media (min-width: 1200px) {
+    .organization-title {
+        font-size: 28px;
+    }
+    
+    .section-title {
+        font-size: 28px;
+    }
+    
+    .event-title {
+        font-size: 20px;
+    }
+}
+
+/* Enhanced Theme Transitions */
+.container,
+.event-block,
+.event-item,
+.sidebar-item,
+.section-item,
+.contact-item {
+    transition: 
+        background-color 0.5s ease,
+        color 0.5s ease,
+        border-color 0.5s ease,
+        transform 0.3s ease,
+        box-shadow 0.3s ease;
+}
+
+/* Better Image Optimization */
+.event-image img,
+.logo-left img,
+.logo-right img,
+.footer-logo img {
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: crisp-edges;
+}
+
+/* Enhanced Accessibility */
+@media (prefers-reduced-motion: no-preference) {
+    .event-block:hover,
+    .event-item:hover,
+    .sidebar-item:hover,
+    .section-item:hover {
+        transform: translateY(-3px);
+    }
+}
+
+/* Improved Print Layout */
+@media print {
+    .container {
+        max-width: none;
+        margin: 0;
+        padding: 0;
+    }
+    
+    .main-content {
+        padding: 0;
+    }
+    
+    .event-block,
+    .event-item {
+        page-break-inside: avoid;
+        margin-bottom: 20px;
+    }
+    
+    .section-title {
+        color: #000000 !important;
+        border-bottom: 2px solid #000000;
+        padding-bottom: 10px;
+    }
+}
+
+/* Enhanced Error States */
+.error {
+    border: 2px solid #FF4444;
+    background: rgba(255, 68, 68, 0.1);
+}
+
+/* Success States */
+.success {
+    border: 2px solid #00AA44;
+    background: rgba(0, 170, 68, 0.1);
+}
+
+/* Loading Animation for Images */
+img[data-loading="true"] {
+    background: linear-gradient(90deg, var(--card-secondary) 25%, var(--card-hover) 50%, var(--card-secondary) 75%);
+    background-size: 200% 100%;
+    animation: loading 1.5s infinite;
+}
+
+@keyframes loading {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+}
+
+/* Enhanced Mobile Navigation */
+@media (max-width: 768px) {
+    .header-nav {
+        flex-direction: column;
+        gap: 10px;
+        width: 100%;
+    }
+    
+    .header-nav a {
+        padding: 10px;
+        text-align: center;
+        border-radius: 4px;
+        background: rgba(255, 255, 255, 0.1);
+    }
+    
+    .language-toggle,
+    .theme-toggle {
+        align-self: center;
+        margin: 10px 0;
+    }
+}
+
+/* Improved Countdown Timer */
+.countdown-timer {
+    perspective: 1000px;
+}
+
+.countdown-number {
+    transform-style: preserve-3d;
+    transition: transform 0.3s ease;
+}
+
+.countdown-number:hover {
+    transform: rotateY(10deg);
+}
+
+/* Enhanced Gallery Items */
+.gallery-item {
+    position: relative;
+    overflow: hidden;
+}
+
+.gallery-item::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s ease;
+}
+
+.gallery-item:hover::before {
+    left: 100%;
+}
+
+/* Better Contact Item Layout */
+.contact-item {
+    position: relative;
+}
+
+.contact-item::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: var(--accent-yellow);
+    transition: width 0.3s ease;
+}
+
+.contact-item:hover::after {
+    width: 100%;
 }
