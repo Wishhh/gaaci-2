@@ -172,7 +172,7 @@ strong, b {
 
 .organization-title {
     font-family: "DejaVu Sans Bold", "DejaVu Sans", 'Open Sans', Arial, Helvetica, sans-serif;
-    font-size: 24px;
+    font-size: 36px;
     font-weight: 700;
     color: var(--text-primary);
     text-align: center;
@@ -185,7 +185,7 @@ strong, b {
 .header-nav {
     display: flex;
     gap: 15px;
-    font-size: 12px;
+    font-size: 16px;
     font-weight: 400;
 }
 
@@ -243,10 +243,33 @@ strong, b {
 
 /* Top Section */
 .top-section {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 20px;
+    display: flex;
+    align-items: center;
     margin-bottom: 30px;
+}
+
+.banner-container {
+    width: 100%;
+    max-width: 360px;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    margin-bottom: 30px;
+}
+
+.banner-image {
+    width: 100%;
+    height: auto;
+    display: block;
+    transition: transform 0.3s ease;
+}
+
+.banner-image:hover {
+    transform: scale(1.02);
+}
+
+.congress-block {
+    width: 100%;
 }
 
 .event-block {
@@ -285,7 +308,7 @@ strong, b {
 
 .event-title {
     font-family: "DejaVu Sans Bold", "DejaVu Sans", 'Open Sans', Arial, Helvetica, sans-serif;
-    font-size: 18px;
+    font-size: 24px;
     font-weight: 700;
     color: var(--accent-yellow);
     margin-bottom: 10px;
@@ -294,7 +317,7 @@ strong, b {
 }
 
 .event-details {
-    font-size: 14px;
+    font-size: 18px;
     color: var(--text-primary);
     margin-top: 10px;
     transition: color 0.5s ease;
@@ -347,38 +370,52 @@ strong, b {
 /* Lower Section */
 .lower-section {
     display: grid;
-    grid-template-columns: 200px 1fr;
+    grid-template-columns: 350px 1fr;
     gap: 30px;
 }
 
 /* Sidebar */
 .sidebar {
     background: transparent;
+    width: 100%;
+    min-width: 300px;
+    max-width: 350px;
+    overflow: hidden;
 }
 
 .sidebar-nav {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(3, 120px);
+    align-content: center;
+    gap: 15px 15px;
+    width: 100%;
+    /* max-width: 320px; */
+    margin: 0 auto;
 }
 
 .sidebar-item {
-    display: block;
-    padding: 12px 15px;
+    align-content: center;
+    place-items: center;
+    padding: 12px;
     background: var(--card-bg);
-    color: var(--text-primary);
+    color: #37d2ff;
     text-decoration: none;
-    font-size: 14px;
+    font-size: 16px;
     font-weight: 400;
+    letter-spacing: 0.2px; /* subtle tracking for smooth color transitions */
     border-radius: 4px;
-    transition: all 0.3s ease;
+    transition: color 0.3s ease, background 0.3s ease, transform 0.2s ease;
     border-left: 3px solid transparent;
+    text-align: center;
+    height: 100%;
+    width: 100%;
 }
 
 .sidebar-item:hover {
-    background: var(--accent-cyan);
+    background: var(--bg-primary);
     color: #000000;
-    transform: translateX(5px);
+    transform: scale(1.05);
 }
 
 .sidebar-item.active {
@@ -387,15 +424,31 @@ strong, b {
     border-left-color: var(--border-color);
 }
 
+/* Sidebar special coloring: brand word inside item should be white and typographically seamless */
+.sidebar-item .brand-text {
+    color: #FFFFFF;
+    font-weight: inherit;
+    letter-spacing: inherit;
+    text-decoration: inherit;
+    transition: color 0.3s ease;
+}
+
+/* Keep brand white on hover too */
+.sidebar-item:hover .brand-text {
+    color: #FFFFFF;
+}
+
 /* Events List */
 .events-list {
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: 15px;
+    /* max-width: 600px; */
 }
 
 .event-item {
     display: flex;
+    flex-direction: column;
     background: var(--card-bg);
     border-radius: 8px;
     overflow: hidden;
@@ -408,8 +461,8 @@ strong, b {
 }
 
 .event-item .event-image {
-    width: 320px;
-    height: 150px;
+    width: 100%;
+    height: 200px;
     flex-shrink: 0;
 }
 
@@ -420,12 +473,12 @@ strong, b {
 }
 
 .event-item .event-title {
-    font-size: 16px;
+    font-size: 22px;
     margin-bottom: 8px;
 }
 
 .event-item .event-details {
-    font-size: 13px;
+    font-size: 18px;
     margin-top: 0;
 }
 
@@ -438,7 +491,7 @@ strong, b {
     }
     
     .organization-title {
-        font-size: 18px;
+        font-size: 24px;
         margin: 0;
     }
     
@@ -447,8 +500,16 @@ strong, b {
     }
     
     .top-section {
-        grid-template-columns: 1fr;
-        gap: 15px;
+        padding: 0 10px;
+    }
+    
+    .banner-container {
+        max-width: 100%;
+        margin-bottom: 20px;
+    }
+    
+    .congress-block {
+        max-width: 100%;
     }
     
     .lower-section {
@@ -458,18 +519,19 @@ strong, b {
     
     .sidebar {
         order: 2;
+        max-width: none;
     }
     
     .sidebar-nav {
-        flex-direction: row;
-        flex-wrap: wrap;
+        grid-template-columns: repeat(3, 1fr);
+        grid-template-rows: repeat(2, 100px);
         gap: 10px;
+        max-width: 100%;
     }
     
     .sidebar-item {
-        flex: 1;
-        min-width: 120px;
-        text-align: center;
+        font-size: 14px;
+        padding: 8px;
     }
     
     .events-list {
@@ -482,7 +544,7 @@ strong, b {
     
     .event-item .event-image {
         width: 100%;
-        height: 200px;
+        height: 250px;
     }
     
     .countdown-timer {
@@ -594,7 +656,7 @@ strong, b {
 
 .section-title {
     font-family: "DejaVu Sans Bold", "DejaVu Sans", 'Open Sans', Arial, Helvetica, sans-serif;
-    font-size: 24px;
+    font-size: 32px;
     font-weight: 700;
     color: var(--accent-yellow);
     margin-bottom: 20px;
@@ -603,7 +665,7 @@ strong, b {
 }
 
 .about-text {
-    font-size: 16px;
+    font-size: 20px;
     line-height: 1.6;
     color: var(--text-primary);
     max-width: 800px;
@@ -632,7 +694,7 @@ strong, b {
     padding: 15px 20px;
     border-radius: 6px;
     color: var(--text-primary);
-    font-size: 14px;
+    font-size: 18px;
     text-align: center;
     transition: all 0.3s ease;
     border-left: 3px solid var(--accent-yellow);
@@ -700,7 +762,7 @@ strong, b {
     padding: 20px;
     border-radius: 6px;
     color: var(--text-primary);
-    font-size: 14px;
+    font-size: 18px;
     transition: all 0.3s ease;
 }
 
@@ -741,7 +803,7 @@ strong, b {
 .footer-links a {
     color: var(--text-primary);
     text-decoration: none;
-    font-size: 14px;
+    font-size: 18px;
     transition: color 0.3s ease;
 }
 
@@ -761,7 +823,7 @@ strong, b {
 
 .footer-copyright {
     color: var(--text-secondary);
-    font-size: 12px;
+    font-size: 16px;
 }
 
 /* Performance Optimizations */
@@ -919,15 +981,15 @@ input, textarea, select {
 /* Extra small devices */
 @media (max-width: 480px) {
     .organization-title {
-        font-size: 18px;
+        font-size: 20px;
     }
     
     .event-title {
-        font-size: 16px;
+        font-size: 18px;
     }
     
     .section-title {
-        font-size: 20px;
+        font-size: 24px;
     }
     
     .countdown-number {
@@ -938,6 +1000,18 @@ input, textarea, select {
     
     .countdown-label {
         font-size: 9px;
+    }
+    
+    .sidebar-nav {
+        grid-template-columns: repeat(2, 1fr);
+        grid-template-rows: repeat(3, 80px);
+        gap: 8px;
+        max-width: 100%;
+    }
+    
+    .sidebar-item {
+        font-size: 12px;
+        padding: 6px;
     }
 }
 
@@ -953,7 +1027,7 @@ input, textarea, select {
     }
     
     .lower-section {
-        grid-template-columns: 250px 1fr;
+        grid-template-columns: 350px 1fr;
         gap: 40px;
     }
 }

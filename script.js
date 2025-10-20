@@ -73,25 +73,9 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
     
-    // Add click effects for sidebar items
-    const sidebarItems = document.querySelectorAll('.sidebar-item');
-    sidebarItems.forEach(item => {
-        item.addEventListener('click', function(e) {
-            e.preventDefault();
-            
-            // Remove active class from all items
-            sidebarItems.forEach(si => si.classList.remove('active'));
-            
-            // Add active class to clicked item
-            this.classList.add('active');
-            
-            // Add click animation
-            this.style.transform = 'scale(0.95)';
-            setTimeout(() => {
-                this.style.transform = 'scale(1)';
-            }, 150);
-        });
-    });
+    // Sidebar items now only have hover effects, no click functionality
+
+    // Brand highlighting now done directly in HTML
     
     // Ensure all images are visible
     const images = document.querySelectorAll('img');
@@ -121,7 +105,7 @@ document.addEventListener('DOMContentLoaded', function() {
             if (i < originalText.length) {
                 title.textContent += originalText.charAt(i);
                 i++;
-                setTimeout(typeWriter, 50);
+                setTimeout(typeWriter, 20);
             } else {
                 title.style.borderRight = 'none';
             }
