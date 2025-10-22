@@ -381,6 +381,9 @@ strong, b {
     min-width: 300px;
     max-width: 350px;
     overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
 }
 
 .sidebar-nav {
@@ -436,6 +439,28 @@ strong, b {
 /* Keep brand white on hover too */
 .sidebar-item:hover .brand-text {
     color: #FFFFFF;
+}
+
+/* Sidebar Globe */
+.sidebar-globe {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    margin-top: auto;
+}
+
+.globe-image {
+    max-width: 5120px;
+    max-height: 5120px;
+    width: auto;
+    height: auto;
+    opacity: 0.8;
+    transition: opacity 0.3s ease;
+}
+
+.globe-image:hover {
+    opacity: 1;
 }
 
 /* Events List */
@@ -532,6 +557,11 @@ strong, b {
     .sidebar-item {
         font-size: 14px;
         padding: 8px;
+    }
+    
+    .globe-image {
+        max-width: 80px;
+        max-height: 80px;
     }
     
     .events-list {
@@ -1012,6 +1042,15 @@ input, textarea, select {
     .sidebar-item {
         font-size: 12px;
         padding: 6px;
+    }
+    
+    .globe-image {
+        max-width: 60px;
+        max-height: 60px;
+    }
+    
+    .sidebar-globe {
+        padding: 10px;
     }
 }
 
