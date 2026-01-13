@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Event Details - Georgia Association of Allergology and Clinical Immunology</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/dejavu-sans@1.0.0/css/dejavu-sans.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/dejavu-sans-bold@1.0.0/css/dejavu-sans-bold.min.css">
+</head>
+
+<body>
+    <a href="#main-content" class="skip-link" data-i18n="header.skip_link">Skip to main content</a>
+    <div class="container">
+        <!-- Header Section -->
+        <header class="header">
+            <div class="logo-left">
+                <a href="index.html">
+                    <img src="images/logo.png" alt="GAACI Logo">
+                </a>
+            </div>
+            <h1 class="organization-title" data-i18n="header.title">Loading...</h1>
+            <nav class="header-nav">
+                <button id="language-toggle" class="language-toggle">ENG</button>
+                <button id="theme-toggle" class="theme-toggle">🎨</button>
+            </nav>
+        </header>
+
+        <!-- Main Content Area -->
+        <main id="main-content" class="main-content">
+            <!-- Back Button -->
+            <div class="back-button-container">
+                <a href="index.html" class="back-button" data-i18n="detail.back">← Back to Home</a>
+            </div>
+
+            <!-- Event Detail Section -->
+            <section class="event-detail-section">
+                <div id="loading-message" class="loading-message">Loading event details...</div>
+                <div id="error-message" class="error-message" style="display: none;"></div>
+                <div id="event-detail-container" class="event-detail-container" style="display: none;">
+                    <div class="event-detail-layout">
+                        <!-- Sidebar for Navigation -->
+                        <aside id="event-sidebar" class="event-sidebar" style="display: none;">
+                            <nav id="event-sidebar-nav" class="event-sidebar-nav"></nav>
+                        </aside>
+
+                        <!-- Main Content -->
+                        <div class="event-main-content">
+                            <div class="event-detail-content">
+                                <h2 class="event-detail-title" id="detail-title">Event Title</h2>
+                                <div class="event-detail-meta">
+                                    <div class="event-detail-date" id="detail-date"></div>
+                                    <div class="event-detail-location" id="detail-location" style="display: none;">
+                                    </div>
+                                </div>
+                                <div class="event-detail-description" id="detail-description">Event description will
+                                    appear here.</div>
+
+                                <!-- Custom Fields Content -->
+                                <div id="custom-fields-container" class="custom-fields-container"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="footer-content">
+                <div class="footer-links">
+                    <a href="#" data-i18n="footer.gallery">Gallery</a>
+                    <a href="#" data-i18n="footer.membership">Membership</a>
+                    <a href="#" data-i18n="footer.contact">Contact</a>
+                </div>
+                <div class="footer-logo">
+                    <img src="images/logo.png" alt="GAACI Logo">
+                </div>
+                <div class="footer-copyright" data-i18n="footer.copyright">© 2025 www.gaaci.ge</div>
+            </div>
+        </footer>
+    </div>
+    <script src="event-detail.js"></script>
+</body>
+
+</html>

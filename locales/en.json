@@ -1,0 +1,42 @@
+{
+    "header": {
+        "title": "Georgian Association of Allergology and Clinical Immunology (GAACI)",
+        "language_toggle": "GEO",
+        "skip_link": "Skip to main content"
+    },
+    "sidebar": {
+        "brand": "GAACI",
+        "publications": "Publications",
+        "congresses": "Upcoming Congresses",
+        "archive": "Archive Events",
+        "activities": "Activities",
+        "news": "News"
+    },
+    "general": {
+        "sections_title": "Association Sections"
+    },
+    "footer": {
+        "gallery": "Gallery",
+        "membership": "Association Membership",
+        "contact": "Contact Information",
+        "copyright": "© 2025 www.gaaci.ge",
+        "phone_label": "Phone:",
+        "email_label": "Email:",
+        "address_label": "Address:"
+    },
+    "countdown": {
+        "day": "Day",
+        "hour": "Hour",
+        "min": "Min",
+        "sec": "Sec"
+    },
+    "dropdown": {
+        "no_archive_events": "No archive events",
+        "no_upcoming_events": "No upcoming events",
+        "no_activities": "No activities",
+        "error_loading": "Error loading data"
+    },
+    "detail": {
+        "back": "← Back to Home"
+    }
+}

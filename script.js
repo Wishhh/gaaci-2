@@ -1,248 +1,694 @@
-// Countdown Timer Functionality
-document.addEventListener('DOMContentLoaded', function() {
-    // Target date: May 7, 2026 (Congress 2026)
-    const targetDate = new Date('2026-05-07T00:00:00').getTime();
-    
-    // Get countdown elements
-    const countdownNumbers = document.querySelectorAll('.countdown-number');
-    
-    function updateCountdown() {
-        const now = new Date().getTime();
-        const timeLeft = targetDate - now;
-        
-        if (timeLeft > 0) {
-            const days = Math.floor(timeLeft / (1000 * 60 * 60 * 24));
-            const hours = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-            const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
-            const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
-            const milliseconds = Math.floor((timeLeft % 1000) / 10); // For the 5th display
-            
-            // Update countdown display
-            if (countdownNumbers.length >= 4) {
+document.addEventListener('DOMContentLoaded', function () {
+    // --- Localization System ---
+    let currentLanguage = 'geo';
+    let translations = {};
+
+    async function loadTranslations(lang) {
+        try {
+            const res = await fetch(`locales/${lang === 'geo' ? 'ka' : 'en'}.json`);
+            translations = await res.json();
+            applyTranslations();
+        } catch (err) {
+            console.error('Failed to load translations:', err);
+        }
+    }
+
+    function applyTranslations() {
+        // Update HTML lang attribute
+        document.documentElement.lang = currentLanguage === 'geo' ? 'ka' : 'en';
+
+        document.querySelectorAll('[data-i18n]').forEach(element => {
+            const key = element.getAttribute('data-i18n');
+            const keys = key.split('.');
+            let value = translations;
+            for (const k of keys) {
+                value = value && value[k];
+            }
+            if (value) {
+                element.textContent = value;
+            }
+        });
+
+        // Update language toggle button
+        const toggleBtn = document.getElementById('language-toggle');
+        if (translations.header && translations.header.language_toggle) {
+            toggleBtn.textContent = translations.header.language_toggle;
+        }
+
+        // Update page title
+        if (translations.header && translations.header.title) {
+            document.title = translations.header.title;
+        }
+
+        // Re-render dynamic content that depends on language
+        fetchAndRenderEvents();
+        fetchAboutInfo();
+        fetchSections();
+        fetchContactInfo();
+        fetchUpcomingEvent();
+
+        // Update events content if they exist (re-fetch to update language)
+        const archiveEventsContent = document.querySelector('.sidebar-item[data-event-type="archive"] .sidebar-events-content');
+        const upcomingEventsContent = document.querySelector('.sidebar-item[data-event-type="upcoming"] .sidebar-events-content');
+        const activitiesEventsContent = document.querySelector('.sidebar-item[data-event-type="activities"] .sidebar-events-content');
+
+        if (archiveEventsContent && archiveEventsContent.hasChildNodes() && !archiveEventsContent.querySelector('.sidebar-events-empty')) {
+            fetchArchiveEvents();
+        }
+        if (upcomingEventsContent && upcomingEventsContent.hasChildNodes() && !upcomingEventsContent.querySelector('.sidebar-events-empty')) {
+            fetchUpcomingEvents();
+        }
+        if (activitiesEventsContent && activitiesEventsContent.hasChildNodes() && !activitiesEventsContent.querySelector('.sidebar-events-empty')) {
+            fetchActivities();
+        }
+    }
+
+    const languageToggle = document.getElementById('language-toggle');
+    if (languageToggle) {
+        languageToggle.addEventListener('click', () => {
+            currentLanguage = currentLanguage === 'geo' ? 'eng' : 'geo';
+            loadTranslations(currentLanguage);
+        });
+    }
+
+    // --- Dynamic Content Fetching ---
+
+    // Fetch Events Dynamically
+    function truncateText(text, maxLength) {
+        if (!text) return '';
+        if (text.length <= maxLength) return text;
+        return text.substr(0, maxLength) + '...';
+    }
+
+    async function fetchAndRenderEvents() {
+        const container = document.getElementById('events-container');
+        if (!container) return;
+
+        try {
+            const res = await fetch('http://localhost:5000/api/events');
+            const events = await res.json();
+
+            container.innerHTML = '';
+            events.forEach(event => {
+                const navDiv = document.createElement('div');
+                navDiv.className = 'event-item';
+                navDiv.style.cursor = 'pointer';
+                const imageUrl = event.image_url || 'images/logo.png';
+
+                navDiv.innerHTML = `
+                    <div class="event-image">
+                        <img src="${imageUrl}" alt="${event.title_geo}">
+                    </div>
+                    <div class="event-content">
+                        <h3 class="event-title">${currentLanguage === 'geo' ? event.title_geo : event.title_eng}</h3>
+                        <p class="event-details">${truncateText(currentLanguage === 'geo' ? event.details_geo : event.details_eng, 150)}</p>
+                    </div>
+                `;
+
+                navDiv.addEventListener('mouseenter', function () { this.style.transform = 'translateY(-5px)'; });
+                navDiv.addEventListener('mouseleave', function () { this.style.transform = 'translateY(0)'; });
+                navDiv.addEventListener('click', function () {
+                    window.location.href = `event-detail.html?id=${event.id}&type=event`;
+                });
+                container.appendChild(navDiv);
+            });
+        } catch (err) {
+            console.error('Failed to fetch events:', err);
+        }
+    }
+
+    // Fetch About Info
+    async function fetchAboutInfo() {
+        try {
+            const res = await fetch('http://localhost:5000/api/about');
+            const data = await res.json();
+
+            const titleEl = document.getElementById('about-title');
+            const textEl = document.getElementById('about-text');
+
+            if (data.title_geo && titleEl && textEl) {
+                titleEl.textContent = currentLanguage === 'geo' ? data.title_geo : data.title_eng;
+                textEl.textContent = currentLanguage === 'geo' ? data.content_geo : data.content_eng;
+            }
+        } catch (err) {
+            console.error('Failed to fetch about info', err);
+        }
+    }
+
+    // Fetch Sections
+    async function fetchSections() {
+        const grid = document.getElementById('sections-grid');
+        if (!grid) return;
+        try {
+            const res = await fetch('http://localhost:5000/api/sections');
+            const sections = await res.json();
+
+            grid.innerHTML = '';
+            sections.forEach(sec => {
+                const div = document.createElement('div');
+                div.className = 'section-item';
+                div.textContent = currentLanguage === 'geo' ? sec.title_geo : sec.title_eng;
+                grid.appendChild(div);
+            });
+        } catch (err) {
+            console.error('Failed to fetch sections', err);
+        }
+    }
+
+    // Fetch Contact Info
+    async function fetchContactInfo() {
+        try {
+            const res = await fetch('http://localhost:5000/api/contact');
+            const data = await res.json();
+
+            if (data.phone) {
+                const phoneEl = document.getElementById('contact-phone');
+                const emailEl = document.getElementById('contact-email');
+                const addressEl = document.getElementById('contact-address');
+
+                if (phoneEl) phoneEl.textContent = data.phone;
+                if (emailEl) emailEl.textContent = data.email;
+                if (addressEl) addressEl.textContent = currentLanguage === 'geo' ? data.address_geo : data.address_eng;
+            }
+        } catch (err) {
+            console.error('Failed to fetch contact info', err);
+        }
+    }
+
+    // Fetch Upcoming Event
+    let countdownInterval;
+    async function fetchUpcomingEvent() {
+        try {
+            const res = await fetch('http://localhost:5000/api/upcoming-event');
+            const event = await res.json();
+
+            if (event.title_geo) {
+                document.getElementById('upcoming-title').textContent = currentLanguage === 'geo' ? event.title_geo : event.title_eng;
+                document.getElementById('upcoming-details').textContent = currentLanguage === 'geo' ? event.location_geo : event.location_eng;
+
+                const img = document.getElementById('upcoming-image');
+                if (img && event.image_url) img.src = event.image_url;
+
+                // Make the upcoming event block clickable
+                const eventBlock = document.querySelector('.congress-block');
+                if (eventBlock && event.id) {
+                    eventBlock.style.cursor = 'pointer';
+                    eventBlock.addEventListener('click', function () {
+                        window.location.href = `event-detail.html?id=${event.id}&type=upcoming`;
+                    });
+                }
+
+                // Initialize Countdown
+                if (event.start_date) {
+                    startCountdown(new Date(event.start_date).getTime());
+                }
+            }
+        } catch (err) {
+            console.error('Failed to fetch upcoming event', err);
+        }
+    }
+
+    // Countdown Logic
+    function startCountdown(targetDate) {
+        if (countdownInterval) clearInterval(countdownInterval);
+
+        const countdownNumbers = document.querySelectorAll('.countdown-number');
+        if (countdownNumbers.length === 0) return;
+
+        function updateCountdown() {
+            const now = new Date().getTime();
+            const timeLeft = targetDate - now;
+
+            if (timeLeft > 0) {
+                const days = Math.floor(timeLeft / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
+
                 countdownNumbers[0].textContent = days.toString().padStart(2, '0');
                 countdownNumbers[1].textContent = hours.toString().padStart(2, '0');
                 countdownNumbers[2].textContent = minutes.toString().padStart(2, '0');
                 countdownNumbers[3].textContent = seconds.toString().padStart(2, '0');
-                
-                // 5th display shows milliseconds/10 for extra precision
-                if (countdownNumbers.length >= 5) {
-                    countdownNumbers[4].textContent = milliseconds.toString().padStart(2, '0');
-                }
-            }
-        } else {
-            // Event has passed
-            if (countdownNumbers.length >= 4) {
-                countdownNumbers[0].textContent = '00';
-                countdownNumbers[1].textContent = '00';
-                countdownNumbers[2].textContent = '00';
-                countdownNumbers[3].textContent = '00';
-                if (countdownNumbers.length >= 5) {
-                    countdownNumbers[4].textContent = '00';
-                }
-            }
-        }
-    }
-    
-    // Update countdown immediately and then every 100ms for smooth animation
-    updateCountdown();
-    setInterval(updateCountdown, 100);
-    
-    // Smooth scroll for navigation links
-    const navLinks = document.querySelectorAll('.header-nav a, .sidebar-item');
-    navLinks.forEach(link => {
-        link.addEventListener('click', function(e) {
-            e.preventDefault();
-            
-            // Add smooth transition effect
-            this.style.transform = 'scale(0.95)';
-            setTimeout(() => {
-                this.style.transform = 'scale(1)';
-            }, 150);
-        });
-    });
-    
-    // Add hover effects for event blocks
-    const eventBlocks = document.querySelectorAll('.event-block, .event-item');
-    eventBlocks.forEach(block => {
-        block.addEventListener('mouseenter', function() {
-            this.style.transform = 'translateY(-5px)';
-        });
-        
-        block.addEventListener('mouseleave', function() {
-            this.style.transform = 'translateY(0)';
-        });
-    });
-    
-    // Sidebar items now only have hover effects, no click functionality
-
-    // Brand highlighting now done directly in HTML
-    
-    // Ensure all images are visible
-    const images = document.querySelectorAll('img');
-    images.forEach(img => {
-        img.style.opacity = '1';
-        img.style.transition = 'transform 0.3s ease';
-    });
-    
-    // Add parallax effect to background
-    window.addEventListener('scroll', function() {
-        const scrolled = window.pageYOffset;
-        const container = document.querySelector('.container');
-        if (container) {
-            container.style.transform = `translateY(${scrolled * 0.1}px)`;
-        }
-    });
-    
-    // Add typing effect for organization title
-    const title = document.querySelector('.organization-title');
-    if (title) {
-        const originalText = title.textContent;
-        title.textContent = '';
-        title.style.borderRight = '2px solid #FFFF00';
-        
-        let i = 0;
-        const typeWriter = () => {
-            if (i < originalText.length) {
-                title.textContent += originalText.charAt(i);
-                i++;
-                setTimeout(typeWriter, 20);
             } else {
-                title.style.borderRight = 'none';
+                countdownNumbers.forEach(el => el.textContent = '00');
             }
-        };
-        
-        setTimeout(typeWriter, 500);
-    }
-    
-    // Add countdown number animation
-    const animateCountdownNumber = (element, newValue) => {
-        element.style.transform = 'scale(1.1)';
-        element.style.color = '#FFFF00';
-        
-        setTimeout(() => {
-            element.style.transform = 'scale(1)';
-            element.style.color = '#FFFFFF';
-        }, 200);
-    };
-    
-    // Enhanced countdown with animations
-    let previousValues = [0, 0, 0, 0, 0];
-    setInterval(() => {
-        const now = new Date().getTime();
-        const timeLeft = targetDate - now;
-        
-        if (timeLeft > 0) {
-            const days = Math.floor(timeLeft / (1000 * 60 * 60 * 24));
-            const hours = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-            const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
-            const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
-            const milliseconds = Math.floor((timeLeft % 1000) / 10);
-            
-            const currentValues = [days, hours, minutes, seconds, milliseconds];
-            
-            currentValues.forEach((value, index) => {
-                if (countdownNumbers[index] && value !== previousValues[index]) {
-                    animateCountdownNumber(countdownNumbers[index], value);
-                }
-            });
-            
-            previousValues = currentValues;
-        }
-    }, 100);
 
-    // Language Toggle Functionality
-    let currentLanguage = 'geo'; // Default to Georgian
-    
-    const languageToggle = document.getElementById('language-toggle');
-    const elementsWithTranslation = document.querySelectorAll('[data-geo][data-eng]');
-    
-    function switchLanguage() {
-        currentLanguage = currentLanguage === 'geo' ? 'eng' : 'geo';
-        
-        elementsWithTranslation.forEach(element => {
-            const geoText = element.getAttribute('data-geo');
-            const engText = element.getAttribute('data-eng');
-            
-            if (currentLanguage === 'eng') {
-                element.textContent = engText;
-            } else {
-                element.textContent = geoText;
-            }
-        });
-        
-        // Update toggle button text
-        languageToggle.textContent = currentLanguage === 'geo' ? 'ENG' : 'GEO';
-        
-        // Update page title
-        if (currentLanguage === 'eng') {
-            document.title = 'Georgian Association of Allergology and Clinical Immunology (GAACI)';
-        } else {
-            document.title = 'საქართველოს ალერგოლოგიისა და კლინიკური იმუნოლოგიის ასოციაცია (GAACI)';
+            // Labels are handled by applyTranslations usually, but if countdown re-renders they might persist? 
+            // In this HTML structure, labels are static divs with data-i18n, so we don't need to re-render them here.
         }
+
+        updateCountdown();
+        countdownInterval = setInterval(updateCountdown, 1000);
     }
-    
-    // Add click event to language toggle
-    languageToggle.addEventListener('click', switchLanguage);
 
     // Theme Toggle Functionality
-    let currentTheme = 'default'; // Default theme
+    let currentTheme = 'default';
     const themes = ['default', 'blue', 'green', 'red', 'purple'];
     let themeIndex = 0;
-    
+
     const themeToggle = document.getElementById('theme-toggle');
     const body = document.body;
-    
+
     function switchTheme() {
         themeIndex = (themeIndex + 1) % themes.length;
         currentTheme = themes[themeIndex];
-        
-        // Remove all theme classes
-        themes.forEach(theme => {
-            body.classList.remove(`theme-${theme}`);
-        });
-        
-        // Add current theme class
-        if (currentTheme !== 'default') {
-            body.setAttribute('data-theme', currentTheme);
-        } else {
-            body.removeAttribute('data-theme');
-        }
-        
-        // Update theme button with theme emoji
-        const themeEmojis = {
-            'default': '🎨',
-            'blue': '🔵',
-            'green': '🟢',
-            'red': '🔴',
-            'purple': '🟣'
-        };
-        
+        themes.forEach(theme => body.classList.remove(`theme-${theme}`));
+        if (currentTheme !== 'default') body.setAttribute('data-theme', currentTheme);
+        else body.removeAttribute('data-theme');
+
+        const themeEmojis = { 'default': '🎨', 'blue': '🔵', 'green': '🟢', 'red': '🔴', 'purple': '🟣' };
         themeToggle.textContent = themeEmojis[currentTheme];
-        
-        // Store theme preference
         localStorage.setItem('gaaci-theme', currentTheme);
     }
-    
-    // Load saved theme on page load
+
     const savedTheme = localStorage.getItem('gaaci-theme');
     if (savedTheme && themes.includes(savedTheme)) {
         currentTheme = savedTheme;
         themeIndex = themes.indexOf(savedTheme);
-        
-        if (currentTheme !== 'default') {
-            body.setAttribute('data-theme', currentTheme);
-        }
-        
-        const themeEmojis = {
-            'default': '🎨',
-            'blue': '🔵',
-            'green': '🟢',
-            'red': '🔴',
-            'purple': '🟣'
-        };
+        if (currentTheme !== 'default') body.setAttribute('data-theme', currentTheme);
+        const themeEmojis = { 'default': '🎨', 'blue': '🔵', 'green': '🟢', 'red': '🔴', 'purple': '🟣' };
         themeToggle.textContent = themeEmojis[currentTheme];
     }
-    
-    // Add click event to theme toggle
-    themeToggle.addEventListener('click', switchTheme);
+    if (themeToggle) themeToggle.addEventListener('click', switchTheme);
+
+    // Smooth scroll for navigation links
+    const navLinks = document.querySelectorAll('.sidebar-item[href^="#"]');
+    navLinks.forEach(link => {
+        link.addEventListener('click', function (e) {
+            const href = this.getAttribute('href');
+            if (href && href.startsWith('#')) {
+                e.preventDefault();
+                const targetId = href.substring(1);
+                const targetElement = document.getElementById(targetId);
+                if (targetElement) {
+                    targetElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            }
+        });
+    });
+
+    // Footer links smooth scroll
+    const footerLinks = document.querySelectorAll('.footer-links a[href^="#"]');
+    footerLinks.forEach(link => {
+        link.addEventListener('click', function (e) {
+            const href = this.getAttribute('href');
+            if (href && href.startsWith('#')) {
+                e.preventDefault();
+                const targetId = href.substring(1);
+                const targetElement = document.getElementById(targetId);
+                if (targetElement) {
+                    targetElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            }
+        });
+    });
+
+    // Handle clicks on sidebar event items (hover dropdown items)
+    // This is a fallback for hash links - individual items handle their own clicks
+    document.addEventListener('click', function (e) {
+        const eventItem = e.target.closest('.sidebar-event-item');
+        if (eventItem) {
+            const href = eventItem.getAttribute('href');
+            // Only handle hash links (internal navigation) if not already handled
+            if (href && href.startsWith('#') && !e.defaultPrevented) {
+                e.preventDefault();
+                e.stopPropagation();
+                const targetId = href.substring(1);
+                const targetElement = document.getElementById(targetId);
+                if (targetElement) {
+                    targetElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            }
+            // For external links (like event-detail.html), do nothing - let browser handle it
+        }
+    });
+
+    // Sidebar content replacement functionality
+    function initializeSidebarDropdowns() {
+        const aboutItem = document.querySelector('.sidebar-item[data-event-type="about"]');
+        const archiveItem = document.querySelector('.sidebar-item[data-event-type="archive"]');
+        const upcomingItem = document.querySelector('.sidebar-item[data-event-type="upcoming"]');
+        const activitiesItem = document.querySelector('.sidebar-item[data-event-type="activities"]');
+
+        // Function to sync heights of both items
+        function syncHeights(forceRestore = false) {
+            if (archiveItem && upcomingItem) {
+                const archiveHeight = archiveItem.offsetHeight;
+                const upcomingHeight = upcomingItem.offsetHeight;
+                const archiveOriginal = parseInt(archiveItem.dataset.originalHeight) || archiveHeight;
+                const upcomingOriginal = parseInt(upcomingItem.dataset.originalHeight) || upcomingHeight;
+
+                if (forceRestore) {
+                    // Restore both to original heights
+                    archiveItem.style.height = archiveOriginal + 'px';
+                    upcomingItem.style.height = upcomingOriginal + 'px';
+                } else {
+                    // Only sync if one is expanded (height > original)
+                    const maxHeight = Math.max(archiveHeight, upcomingHeight);
+
+                    if (archiveHeight > archiveOriginal || upcomingHeight > upcomingOriginal) {
+                        // Both should be at max height
+                        archiveItem.style.height = maxHeight + 'px';
+                        upcomingItem.style.height = maxHeight + 'px';
+                    }
+                }
+            }
+        }
+
+        // About (static list)
+        if (aboutItem && !aboutItem.dataset.initialized) {
+            aboutItem.dataset.initialized = 'true';
+            let eventsContent = aboutItem.querySelector('.sidebar-events-content');
+            if (!eventsContent) {
+                eventsContent = document.createElement('div');
+                eventsContent.className = 'sidebar-events-content';
+                aboutItem.appendChild(eventsContent);
+            }
+
+            const originalHeight = aboutItem.offsetHeight;
+            aboutItem.dataset.originalHeight = originalHeight;
+
+            aboutItem.addEventListener('mouseenter', () => {
+                const itemsGeo = [
+                    'საკია',
+                    'აღმასრულებელი კომიტეტი',
+                    'წევრობა',
+                    'საკიაში ონლაინ გაწევრიანება'
+                ];
+
+                const itemsEng = [
+                    'GAACI',
+                    'Executive Committee',
+                    'Membership',
+                    'Join GAACI Online'
+                ];
+
+                const list = document.createElement('div');
+                list.className = 'sidebar-events-list';
+
+                const items = currentLanguage === 'geo' ? itemsGeo : itemsEng;
+                const links = currentLanguage === 'geo' ?
+                    ['about.html', 'about.html', 'index.html#membership-section', 'index.html#membership-section'] :
+                    ['about.html', 'about.html', 'index.html#membership-section', 'index.html#membership-section'];
+
+                items.forEach((text, index) => {
+                    const item = document.createElement('a');
+                    item.href = links[index] || '#about-section';
+                    item.className = 'sidebar-event-item';
+                    item.innerHTML = `<div class="sidebar-event-item-title">${text}</div>`;
+                    list.appendChild(item);
+                });
+
+                eventsContent.innerHTML = '';
+                eventsContent.appendChild(list);
+
+                setTimeout(() => {
+                    aboutItem.style.height = 'auto';
+                }, 50);
+            });
+
+            aboutItem.addEventListener('mouseleave', () => {
+                const original = parseInt(aboutItem.dataset.originalHeight) || aboutItem.offsetHeight;
+                aboutItem.style.height = original + 'px';
+            });
+        }
+
+        // Archive events
+        if (archiveItem && !archiveItem.dataset.initialized) {
+            archiveItem.dataset.initialized = 'true';
+            // Ensure events container exists
+            let eventsContent = archiveItem.querySelector('.sidebar-events-content');
+            if (!eventsContent) {
+                eventsContent = document.createElement('div');
+                eventsContent.className = 'sidebar-events-content';
+                archiveItem.appendChild(eventsContent);
+            }
+
+            // Store original height
+            const originalHeight = archiveItem.offsetHeight;
+            archiveItem.dataset.originalHeight = originalHeight;
+
+            archiveItem.addEventListener('mouseenter', () => {
+                const eventsContentEl = archiveItem.querySelector('.sidebar-events-content');
+                if (!eventsContentEl.hasChildNodes() || eventsContentEl.querySelector('.sidebar-events-empty')) {
+                    fetchArchiveEvents();
+                }
+                // Expand height after a small delay to allow content to render
+                setTimeout(() => {
+                    archiveItem.style.height = 'auto';
+                    syncHeights();
+                }, 50);
+            });
+
+            archiveItem.addEventListener('mouseleave', () => {
+                // Check if upcoming item is also not hovered
+                const upcomingHovered = upcomingItem && upcomingItem.matches(':hover');
+                if (!upcomingHovered) {
+                    // Both should restore to original
+                    syncHeights(true);
+                } else {
+                    // Only restore archive, keep upcoming expanded
+                    const original = parseInt(archiveItem.dataset.originalHeight) || archiveItem.offsetHeight;
+                    archiveItem.style.height = original + 'px';
+                }
+            });
+        }
+
+        // Upcoming events
+        if (upcomingItem && !upcomingItem.dataset.initialized) {
+            upcomingItem.dataset.initialized = 'true';
+            // Ensure events container exists
+            let eventsContent = upcomingItem.querySelector('.sidebar-events-content');
+            if (!eventsContent) {
+                eventsContent = document.createElement('div');
+                eventsContent.className = 'sidebar-events-content';
+                upcomingItem.appendChild(eventsContent);
+            }
+
+            // Store original height
+            const originalHeight = upcomingItem.offsetHeight;
+            upcomingItem.dataset.originalHeight = originalHeight;
+
+            upcomingItem.addEventListener('mouseenter', () => {
+                const eventsContentEl = upcomingItem.querySelector('.sidebar-events-content');
+                if (!eventsContentEl.hasChildNodes() || eventsContentEl.querySelector('.sidebar-events-empty')) {
+                    fetchUpcomingEvents();
+                }
+                // Expand height after a small delay to allow content to render
+                setTimeout(() => {
+                    upcomingItem.style.height = 'auto';
+                    syncHeights();
+                }, 50);
+            });
+
+            upcomingItem.addEventListener('mouseleave', () => {
+                // Check if archive item is also not hovered
+                const archiveHovered = archiveItem && archiveItem.matches(':hover');
+                if (!archiveHovered) {
+                    // Both should restore to original
+                    syncHeights(true);
+                } else {
+                    // Only restore upcoming, keep archive expanded
+                    const original = parseInt(upcomingItem.dataset.originalHeight) || upcomingItem.offsetHeight;
+                    upcomingItem.style.height = original + 'px';
+                }
+            });
+        }
+
+        // Activities
+        if (activitiesItem && !activitiesItem.dataset.initialized) {
+            activitiesItem.dataset.initialized = 'true';
+            // Ensure events container exists
+            let eventsContent = activitiesItem.querySelector('.sidebar-events-content');
+            if (!eventsContent) {
+                eventsContent = document.createElement('div');
+                eventsContent.className = 'sidebar-events-content';
+                activitiesItem.appendChild(eventsContent);
+            }
+
+            // Store original height
+            const originalHeight = activitiesItem.offsetHeight;
+            activitiesItem.dataset.originalHeight = originalHeight;
+
+            activitiesItem.addEventListener('mouseenter', () => {
+                const eventsContentEl = activitiesItem.querySelector('.sidebar-events-content');
+                if (!eventsContentEl.hasChildNodes() || eventsContentEl.querySelector('.sidebar-events-empty')) {
+                    fetchActivities();
+                }
+                // Expand height after a small delay to allow content to render
+                setTimeout(() => {
+                    activitiesItem.style.height = 'auto';
+                    if (window.syncSidebarHeights) {
+                        window.syncSidebarHeights();
+                    }
+                }, 50);
+            });
+
+            activitiesItem.addEventListener('mouseleave', () => {
+                // Restore original height
+                const original = parseInt(activitiesItem.dataset.originalHeight) || activitiesItem.offsetHeight;
+                activitiesItem.style.height = original + 'px';
+            });
+        }
+
+        // Store sync function globally so fetch functions can call it
+        window.syncSidebarHeights = syncHeights;
+    }
+
+    // Fetch Archive Events
+    async function fetchArchiveEvents() {
+        const archiveItem = document.querySelector('.sidebar-item[data-event-type="archive"]');
+        const eventsContent = archiveItem?.querySelector('.sidebar-events-content');
+        if (!eventsContent) return;
+
+        try {
+            const res = await fetch('http://localhost:5000/api/events/archive');
+            const events = await res.json();
+
+            eventsContent.innerHTML = '';
+            if (events.length === 0) {
+                const emptyMsg = translations.dropdown?.no_archive_events || 'არქივში ღონისძიებები არ არის';
+                eventsContent.innerHTML = `<div class="sidebar-events-empty">${emptyMsg}</div>`;
+                return;
+            }
+
+            const eventsList = document.createElement('div');
+            eventsList.className = 'sidebar-events-list';
+
+            events.forEach(event => {
+                const item = document.createElement('a');
+                item.href = `event-detail.html?id=${event.id}&type=event`;
+                item.className = 'sidebar-event-item';
+                const title = currentLanguage === 'geo' ? event.title_geo : event.title_eng;
+
+                item.innerHTML = `
+                    <div class="sidebar-event-item-title">${title}</div>
+                `;
+                // Ensure clicks work properly
+                item.addEventListener('click', function (e) {
+                    e.stopPropagation(); // Prevent bubbling to parent
+                    // Allow default navigation
+                });
+                eventsList.appendChild(item);
+            });
+
+            eventsContent.appendChild(eventsList);
+        } catch (err) {
+            console.error('Failed to fetch archive events:', err);
+            const errorMsg = translations.dropdown?.error_loading || 'შეცდომა მონაცემების ჩატვირთვისას';
+            eventsContent.innerHTML = `<div class="sidebar-events-empty">${errorMsg}</div>`;
+        }
+    }
+
+    // Fetch Upcoming Events
+    async function fetchUpcomingEvents() {
+        const upcomingItem = document.querySelector('.sidebar-item[data-event-type="upcoming"]');
+        const eventsContent = upcomingItem?.querySelector('.sidebar-events-content');
+        if (!eventsContent) return;
+
+        try {
+            const res = await fetch('http://localhost:5000/api/events/upcoming');
+            const events = await res.json();
+
+            eventsContent.innerHTML = '';
+            if (events.length === 0) {
+                const emptyMsg = translations.dropdown?.no_upcoming_events || 'მომავალი ღონისძიებები არ არის';
+                eventsContent.innerHTML = `<div class="sidebar-events-empty">${emptyMsg}</div>`;
+                return;
+            }
+
+            const eventsList = document.createElement('div');
+            eventsList.className = 'sidebar-events-list';
+
+            events.forEach(event => {
+                const item = document.createElement('a');
+                item.href = `event-detail.html?id=${event.id}&type=upcoming`;
+                item.className = 'sidebar-event-item';
+                const title = currentLanguage === 'geo' ? event.title_geo : event.title_eng;
+
+                item.innerHTML = `
+                    <div class="sidebar-event-item-title">${title}</div>
+                `;
+                // Ensure clicks work properly
+                item.addEventListener('click', function (e) {
+                    e.stopPropagation(); // Prevent bubbling to parent
+                    // Allow default navigation
+                });
+                eventsList.appendChild(item);
+            });
+
+            eventsContent.appendChild(eventsList);
+
+            // Sync heights after content is loaded
+            if (window.syncSidebarHeights) {
+                setTimeout(() => {
+                    window.syncSidebarHeights();
+                }, 100);
+            }
+        } catch (err) {
+            console.error('Failed to fetch upcoming events:', err);
+            const errorMsg = translations.dropdown?.error_loading || 'შეცდომა მონაცემების ჩატვირთვისას';
+            eventsContent.innerHTML = `<div class="sidebar-events-empty">${errorMsg}</div>`;
+        }
+    }
+
+    // Fetch Activities
+    async function fetchActivities() {
+        const activitiesItem = document.querySelector('.sidebar-item[data-event-type="activities"]');
+        const eventsContent = activitiesItem?.querySelector('.sidebar-events-content');
+        if (!eventsContent) return;
+
+        try {
+            const res = await fetch('http://localhost:5000/api/activities');
+            const activities = await res.json();
+
+            eventsContent.innerHTML = '';
+            if (activities.length === 0) {
+                const emptyMsg = translations.dropdown?.no_activities || 'აქტივობები არ არის';
+                eventsContent.innerHTML = `<div class="sidebar-events-empty">${emptyMsg}</div>`;
+                return;
+            }
+
+            const eventsList = document.createElement('div');
+            eventsList.className = 'sidebar-events-list';
+
+            activities.forEach(activity => {
+                const item = document.createElement('a');
+                item.href = `event-detail.html?id=${activity.id}&type=activity`;
+                item.className = 'sidebar-event-item';
+                const title = currentLanguage === 'geo' ? activity.title_geo : activity.title_eng;
+
+                item.innerHTML = `
+                    <div class="sidebar-event-item-title">${title}</div>
+                `;
+                // Ensure clicks work properly
+                item.addEventListener('click', function (e) {
+                    e.stopPropagation(); // Prevent bubbling to parent
+                    // Allow default navigation
+                });
+                eventsList.appendChild(item);
+            });
+
+            eventsContent.appendChild(eventsList);
+
+            // Sync heights after content is loaded
+            if (window.syncSidebarHeights) {
+                setTimeout(() => {
+                    window.syncSidebarHeights();
+                }, 100);
+            }
+        } catch (err) {
+            console.error('Failed to fetch activities:', err);
+            const errorMsg = translations.dropdown?.error_loading || 'შეცდომა მონაცემების ჩატვირთვისას';
+            eventsContent.innerHTML = `<div class="sidebar-events-empty">${errorMsg}</div>`;
+        }
+    }
+
+    // Initial Load
+    loadTranslations(currentLanguage);
+
+    // Initialize sidebar dropdowns after DOM is ready
+    setTimeout(() => {
+        initializeSidebarDropdowns();
+    }, 100);
 });

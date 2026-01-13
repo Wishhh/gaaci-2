@@ -1,29 +1,26 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>საქართველოს ალერგოლოგიისა და კლინიკური იმუნოლოგიის ასოციაცია (GAACI)</title>
+    <title>Georgia Association of Allergology and Clinical Immunology</title>
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
-    <!-- DejaVu Sans Fonts -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/dejavu-sans@1.0.0/css/dejavu-sans.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/dejavu-sans-bold@1.0.0/css/dejavu-sans-bold.min.css">
 </head>
+
 <body>
-    <a href="#main-content" class="skip-link">Skip to main content</a>
+    <a href="#main-content" class="skip-link" data-i18n="header.skip_link">Skip to main content</a>
     <div class="container">
         <!-- Header Section -->
         <header class="header">
             <div class="logo-left">
                 <img src="images/logo.png" alt="GAACI Logo">
             </div>
-            <h1 class="organization-title" data-geo="საქართველოს ალერგოლოგიისა და კლინიკური იმუნოლოგიის ასოციაცია (საკია)" data-eng="Georgian Association of Allergology and Clinical Immunology (GAACI)">საქართველოს ალერგოლოგიისა და კლინიკური იმუნოლოგიის ასოციაცია (საკია)</h1>
+            <h1 class="organization-title" data-i18n="header.title">Loading...</h1>
             <nav class="header-nav">
-                <!-- <a href="#" data-geo="ჩვენს შესახებ" data-eng="About Us">ჩვენს შესახებ</a>
-                <a href="#" data-geo="გალერეა" data-eng="Gallery">გალერეა</a>
-                <a href="#" data-geo="პუბლიკაციები" data-eng="Publications">პუბლიკაციები</a>
-                <a href="#" data-geo="კონტაქტი" data-eng="Contact">კონტაქტი</a> -->
                 <button id="language-toggle" class="language-toggle">ENG</button>
                 <button id="theme-toggle" class="theme-toggle">🎨</button>
             </nav>
@@ -31,180 +28,108 @@
 
         <!-- Main Content Area -->
         <main id="main-content" class="main-content">
-            <!-- Top Section with Banner and Congress 2026 -->
-            <section class="top-section">
-                <!-- Banner Image -->
-                <!-- <div class="banner-container">
-                    <img src="images/ban_index.jpg" alt="GAACI Banner" class="banner-image">
-                </div> -->
-
-                <!-- Congress 2026 with Countdown -->
+            <!-- Top Section -->
+            <section class="top-section" id="upcoming-section">
                 <div class="event-block congress-block">
                     <div class="event-image">
-                        <img src="images/upcoming.png" alt="კონგრესი 2026">
+                        <img id="upcoming-image" src="images/upcoming.png" alt="Upcoming Event">
                     </div>
                     <div class="countdown-section">
                         <div class="countdown-timer">
                             <div class="countdown-item">
-                                <div class="countdown-number">0</div>
-                                <div class="countdown-label" data-geo="დღე" data-eng="Day">დღე</div>
+                                <div class="countdown-number">00</div>
+                                <div class="countdown-label" data-i18n="countdown.day">Day</div>
                             </div>
                             <div class="countdown-item">
-                                <div class="countdown-number">0</div>
-                                <div class="countdown-label" data-geo="საათი" data-eng="Hour">საათი</div>
+                                <div class="countdown-number">00</div>
+                                <div class="countdown-label" data-i18n="countdown.hour">Hour</div>
                             </div>
                             <div class="countdown-item">
-                                <div class="countdown-number">0</div>
-                                <div class="countdown-label" data-geo="წუთი" data-eng="Min">წუთი</div>
+                                <div class="countdown-number">00</div>
+                                <div class="countdown-label" data-i18n="countdown.min">Min</div>
                             </div>
                             <div class="countdown-item">
-                                <div class="countdown-number">0</div>
-                                <div class="countdown-label" data-geo="წამი" data-eng="Sec">წამი</div>
+                                <div class="countdown-number">00</div>
+                                <div class="countdown-label" data-i18n="countdown.sec">Sec</div>
                             </div>
                         </div>
-                        <h2 class="event-title" data-geo="საქართველოს ალერგოლოგიისა და კლინიკური იმუნოლოგიის ასოციაციის კონგრესი 2026" data-eng="საქართველოს ალერგოლოგიისა და კლინიკური იმუნოლოგიის ასოციაციის კონგრესი 2026">საქართველოს ალერგოლოგიისა და კლინიკური იმუნოლოგიის ასოციაციის კონგრესი 2026</h2>
-                        <p class="event-details" data-geo="Tbilisi, Georgia - Radisson Blu Iveria Hotel - May 04 - 07" data-eng="Tbilisi, Georgia - Radisson Blu Iveria Hotel - May 04 - 07">Tbilisi, Georgia - Radisson Blu Iveria Hotel - May 04 - 07</p>
+                        <h2 class="event-title" id="upcoming-title">Loading...</h2>
+                        <p class="event-details" id="upcoming-details">Loading...</p>
                     </div>
                 </div>
             </section>
 
-            <!-- Lower Section with Sidebar and Events -->
+            <!-- Lower Section -->
             <section class="lower-section">
                 <!-- Left Sidebar -->
                 <aside class="sidebar">
                     <nav class="sidebar-nav">
-                        <a href="#" class="sidebar-item"><span class="brand-text">საკია</span></a>
-                        <a href="#" class="sidebar-item"><span class="brand-text">საკია</span> პუბლიკაციები</a>
-                        <a href="#" class="sidebar-item"><span class="brand-text">საკია</span> მომავალი კონგრესები</a>
-                        <a href="#" class="sidebar-item"><span class="brand-text">საკია</span> არქივის ღონისძიებები</a>
-                        <a href="#" class="sidebar-item"><span class="brand-text">საკია</span> აქტივობები</a>
-                        <a href="#" class="sidebar-item">სიახლეები</a>
+                        <a href="about.html" class="sidebar-item" data-event-type="about"><span class="brand-text"
+                                data-i18n="sidebar.brand">GAACI</span></a>
+                        <a href="#publications-section" class="sidebar-item"><span class="brand-text"
+                                data-i18n="sidebar.brand">GAACI</span>
+                            <span data-i18n="sidebar.publications">Publications</span></a>
+                        <a href="#upcoming-section" class="sidebar-item" data-event-type="upcoming"><span
+                                class="brand-text" data-i18n="sidebar.brand">GAACI</span>
+                            <span data-i18n="sidebar.congresses">Congresses</span></a>
+                        <a href="#archive-section" class="sidebar-item" data-event-type="archive"><span
+                                class="brand-text" data-i18n="sidebar.brand">GAACI</span>
+                            <span data-i18n="sidebar.archive">Archive</span></a>
+                        <a href="#activities-section" class="sidebar-item" data-event-type="activities"><span
+                                class="brand-text" data-i18n="sidebar.brand">GAACI</span>
+                            <span data-i18n="sidebar.activities">Activities</span></a>
+                        <a href="#news-section" class="sidebar-item" data-i18n="sidebar.news">News</a>
                     </nav>
-                        <img src="images/andza-gray-withoutbg-removebg-preview.png" alt="Globe" class="globe-image">
+                    </nav>
                 </aside>
 
                 <!-- Right Events List -->
-                <div class="events-list">
-                    <!-- Event 2 - Congress 2024 -->
-                    <div class="event-item">
-                        <div class="event-image">
-                            <img src="images/congress1.png" alt="კონგრესი 2024">
-                        </div>
-                        <div class="event-content">
-                            <h3 class="event-title" data-geo="კონგრესი 2024" data-eng="Congress 2024">კონგრესი 2024</h3>
-                            <p class="event-details" data-geo="მხარდაჭერილია შოთა რუსთაველის საქართველოს ეროვნული სამეცნიერო ფონდის მიერ (MG-ISE-23-369) დასრულდა!" data-eng="Supported by Shota Rustaveli National Science Foundation of Georgia (MG-ISE-23-369) - Completed!">მხარდაჭერილია შოთა რუსთაველის საქართველოს ეროვნული სამეცნიერო ფონდის მიერ (MG-ISE-23-369) დასრულდა!</p>
-                        </div>
-                    </div>
-
-                    <!-- Event 2 - Asthma World Day 2024 -->
-                    <div class="event-item">
-                        <div class="event-image">
-                            <img src="images/congress2.png" alt="ასთმის მსოფლიო დღე 2024">
-                        </div>
-                        <div class="event-content">
-                            <h2 class="event-title" data-geo="კონგრესი 2026" data-eng="Congress 2026">კონგრესი 2026</h2>
-                            <p class="event-details" data-geo="საქართველოს ალერგოლოგიისა და კლინიკური იმუნოლოგიის ასოციაციის კონგრესი" data-eng="Georgian Association of Allergology and Clinical Immunology Congress">საქართველოს ალერგოლოგიისა და კლინიკური იმუნოლოგიის ასოციაციის კონგრესი</p>
-                        </div>
-                    </div>
-
-                    <!-- Event 3 - Congress Speakers 2024 -->
-                    <div class="event-item">
-                        <div class="event-image">
-                            <img src="images/congress3.png" alt="2024 წლის კონგრესის სპიკერები და მოწვეული ლექტორები">
-                        </div>
-                        <div class="event-content">
-                            <h3 class="event-title" data-geo="2024 წლის კონგრესის სპიკერები და მოწვეული ლექტორები" data-eng="2024 Congress Speakers and Invited Lecturers">2024 წლის კონგრესის სპიკერები და მოწვეული ლექტორები</h3>
-                            <p class="event-details" data-geo="საქართველოს ალერგოლოგიისა და კლინიკური იმუნოლოგიის ასოციაციის კონგრესი" data-eng="Georgian Association of Allergology and Clinical Immunology Congress">საქართველოს ალერგოლოგიისა და კლინიკური იმუნოლოგიის ასოციაციის კონგრესი</p>
-                        </div>
-                    </div>
-
-                    <!-- Event 4 - Congress Speakers 2024 -->
-                    <div class="event-item">
-                        <div class="event-image">
-                            <img src="images/confgress4.jpg" alt="2024 წლის კონგრესი">
-                        </div>
-                        <div class="event-content">
-                            <h3 class="event-title" data-geo="2024 წლის კონგრესის" data-eng="2024 Congress">2024 წლის კონგრესის სპიკერები და მოწვეული ლექტორები</h3>
-                            <p class="event-details" data-geo="საქართველოს ალერგოლოგიისა და კლინიკური იმუნოლოგიის ასოციაციის კონგრესი" data-eng="Georgian Association of Allergology and Clinical Immunology Congress">საქართველოს ალერგოლოგიისა და კლინიკური იმუნოლოგიის ასოციაციის კონგრესი</p>
-                        </div>
-                    </div>
-
-                    <!-- Event 1 - Asthma World Day 2024 -->
-                    <div class="event-item">
-                        <div class="event-image">
-                            <img src="images/asthma.jpg" alt="ასთმის მსოფლიო დღე 2024">
-                        </div>
-                        <div class="event-content">
-                            <h3 class="event-title" data-geo="ასთმის მსოფლიო დღე 2024" data-eng="Asthma World Day 2024">ასთმის მსოფლიო დღე 2024</h3>
-                            <p class="event-details" data-geo="საქართველოს ალერგოლოგიისა და კლინიკური იმუნოლოგიის ასოციაციის ღონისძიება" data-eng="Georgian Association of Allergology and Clinical Immunology Event">საქართველოს ალერგოლოგიისა და კლინიკური იმუნოლოგიის ასოციაციის ღონისძიება</p>
-                        </div>
-                    </div>
-                </div>
-
-
-                
-
-            </section>
-
-            <!-- About Section -->
-            <section class="about-section">
-                <div class="about-content">
-                    <h2 class="section-title" data-geo="საკიას შესახებ" data-eng="About GAACI">საკიას შესახებ</h2>
-                    <p class="about-text" data-geo="საქართველოს ალერგოლოგიისა და კლინიკური იმუნოლოგიის ასოციაცია (საკია) არაკომერციული ორგანიზაციაა, რომელიც 1984 წელს, თბილისში დაარსდა. საკია-ის მთავარი მიზანია სამეცნიერო, სამედიცინო, დიაგნოსტიკური და საპროფილაქტიკო ღონისძიებების მოწყობა, რომელიც მიმართულია ალერგიის, ასთმისა და იმუნოლოგიის სფეროში." data-eng="The Georgian Association of Allergology and Clinical Immunology (GAACI) is a non-commercial organization founded in 1984 in Tbilisi. GAACI's main goal is to organize scientific, medical, diagnostic and preventive activities aimed at the field of allergy, asthma and immunology.">
-                        საქართველოს ალერგოლოგიისა და კლინიკური იმუნოლოგიის ასოციაცია (საკია) არაკომერციული ორგანიზაციაა, რომელიც 1984 წელს, თბილისში დაარსდა. საკია-ის მთავარი მიზანია სამეცნიერო, სამედიცინო, დიაგნოსტიკური და საპროფილაქტიკო ღონისძიებების მოწყობა, რომელიც მიმართულია ალერგიის, ასთმისა და იმუნოლოგიის სფეროში.
-                    </p>
+                <div class="events-list" id="events-container">
+                    <!-- Events will be loaded dynamically here -->
                 </div>
             </section>
 
-            <!-- Association Sections -->
-            <section class="sections-section">
-                <h2 class="section-title" data-geo="ასოციაციის სექციები" data-eng="Association Sections">ასოციაციის სექციები</h2>
-                <div class="sections-grid">
-                    <div class="section-item" data-geo="ალერგია და ასთმა" data-eng="Allergy and Asthma">ალერგია და ასთმა</div>
-                    <div class="section-item" data-geo="ბაზისური იმუნოლოგია და იმუნობიოტექნოლოგია" data-eng="Basic Immunology and Immunobiotechnology">ბაზისური იმუნოლოგია და იმუნობიოტექნოლოგია</div>
-                    <div class="section-item" data-geo="კლინიკური იმუნოლოგია და იმუნორეაბილიტაცია" data-eng="Clinical Immunology and Immunorehabilitation">კლინიკური იმუნოლოგია და იმუნორეაბილიტაცია</div>
-                    <div class="section-item" data-geo="პედიატრია" data-eng="Pediatrics">პედიატრია</div>
-                    <div class="section-item" data-geo="პულმონოლოგიური დაავადებების იმუნოლოგია" data-eng="Pulmonological Disease Immunology">პულმონოლოგიური დაავადებების იმუნოლოგია</div>
-                    <div class="section-item" data-geo="დერმატო-ვენეროლოგია" data-eng="Dermato-venereology">დერმატო-ვენეროლოგია</div>
-                    <div class="section-item" data-geo="ინფექციური დაავადებების იმუნოლოგია" data-eng="Infectious Disease Immunology">ინფექციური დაავადებების იმუნოლოგია</div>
-                    <div class="section-item" data-geo="ვაქცინაცია" data-eng="Vaccination">ვაქცინაცია</div>
-                </div>
-            </section>
+            <!-- Archive Section -->
+            <section id="archive-section" style="display: none;"></section>
 
+            <!-- Activities Section -->
+            <section id="activities-section" style="display: none;"></section>
 
-            <!-- Contact Section -->
-            <section class="contact-section">
-                <h2 class="section-title" data-geo="საკონტაქტო ინფორმაცია" data-eng="Contact Information">საკონტაქტო ინფორმაცია</h2>
-                <div class="contact-info">
-                    <div class="contact-item">
-                        <strong data-geo="ტელეფონი:" data-eng="Phone:">ტელეფონი:</strong> + 995 551 11 19 89
-                    </div>
-                    <div class="contact-item">
-                        <strong data-geo="ელ-ფოსტა:" data-eng="Email:">ელ-ფოსტა:</strong> gaaci2014@gmail.com
-                    </div>
-                    <div class="contact-item">
-                        <strong data-geo="მისამართი:" data-eng="Address:">მისამართი:</strong> <span data-geo="რუსთაველის გამზ. №104, 4600, ქუთაისი, საქართველო" data-eng="Rustaveli Ave. №104, 4600, Kutaisi, Georgia">რუსთაველის გამზ. №104, 4600, ქუთაისი, საქართველო</span>
-                    </div>
-                </div>
-            </section>
+            <!-- Publications Section -->
+            <section id="publications-section" style="display: none;"></section>
+
+            <!-- Membership Section -->
+            <section id="membership-section" style="display: none;"></section>
+
+            <!-- Gallery Section -->
+            <section id="gallery-section" style="display: none;"></section>
+
+            <!-- News Section -->
+            <section id="news-section" style="display: none;"></section>
+
+            <!-- About Section Removed (Moved to about.html) -->
+
+            <!-- Association Sections Moved to about.html -->
+
+            <!-- Contact Section Moved to about.html -->
         </main>
 
         <!-- Footer -->
         <footer class="footer">
             <div class="footer-content">
                 <div class="footer-links">
-                    <a href="#" data-geo="გალერეა" data-eng="Gallery">გალერეა</a>
-                    <a href="#" data-geo="ასოციაციაში გაწევრიანება" data-eng="Association Membership">ასოციაციაში გაწევრიანება</a>
-                    <a href="#" data-geo="კონტაქტი" data-eng="Contact">კონტაქტი</a>
+                    <a href="#gallery-section" data-i18n="footer.gallery">Gallery</a>
+                    <a href="#membership-section" data-i18n="footer.membership">Membership</a>
+                    <a href="about.html#contact-section" data-i18n="footer.contact">Contact</a>
                 </div>
                 <div class="footer-logo">
                     <img src="images/logo.png" alt="GAACI Logo">
                 </div>
-                <div class="footer-copyright">© 2025 www.gaaci.ge</div>
+                <div class="footer-copyright" data-i18n="footer.copyright">© 2025 www.gaaci.ge</div>
             </div>
         </footer>
     </div>
-
     <script src="script.js"></script>
 </body>
+
 </html>

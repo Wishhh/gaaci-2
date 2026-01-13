@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - GAACI</title>
+    <link rel="stylesheet" href="admin.css">
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+    <style>
+        .custom-field-item {
+            border: 1px solid #ddd;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 4px;
+            background: #f9f9f9;
+        }
+
+        .custom-field-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .remove-field-btn {
+            background: #ff4444;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .quill-editor-container {
+            background: white;
+            height: 200px;
+            margin-bottom: 15px;
+        }
+
+        .ql-container {
+            font-family: inherit;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <h2>GAACI Admin</h2>
+        </div>
+        <nav class="sidebar-nav">
+            <a href="#" class="nav-item active" data-section="dashboard">
+                <span class="nav-icon">📊</span>
+                <span>Dashboard</span>
+            </a>
+            <a href="#" class="nav-item" data-section="events">
+                <span class="nav-icon">📅</span>
+                <span>Events</span>
+            </a>
+            <a href="#" class="nav-item" data-section="upcoming">
+                <span class="nav-icon">🔮</span>
+                <span>Upcoming Events</span>
+            </a>
+            <a href="#" class="nav-item" data-section="activities">
+                <span class="nav-icon">🎯</span>
+                <span>Activities</span>
+            </a>
+            <a href="#" class="nav-item" data-section="about">
+                <span class="nav-icon">ℹ️</span>
+                <span>About Info</span>
+            </a>
+            <a href="#" class="nav-item" data-section="sections">
+                <span class="nav-icon">📑</span>
+                <span>Sections</span>
+            </a>
+            <a href="#" class="nav-item" data-section="contact">
+                <span class="nav-icon">📞</span>
+                <span>Contact Info</span>
+            </a>
+            <a href="#" class="nav-item" data-section="users">
+                <span class="nav-icon">👥</span>
+                <span>Users</span>
+            </a>
+        </nav>
+        <div class="sidebar-footer">
+            <button class="logout-btn" id="logout-btn">🚪 Logout</button>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Header -->
+        <header class="content-header">
+            <h1 id="page-title">Dashboard</h1>
+            <div class="header-actions">
+                <span class="user-info" id="user-info">Admin</span>
+            </div>
+        </header>
+
+        <!-- Dashboard Section -->
+        <section id="dashboard-section" class="content-section active">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon">📅</div>
+                    <div class="stat-info">
+                        <h3 id="events-count">0</h3>
+                        <p>Total Events</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">🔮</div>
+                    <div class="stat-info">
+                        <h3 id="upcoming-count">0</h3>
+                        <p>Upcoming Events</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">🎯</div>
+                    <div class="stat-info">
+                        <h3 id="activities-count">0</h3>
+                        <p>Activities</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">📑</div>
+                    <div class="stat-info">
+                        <h3 id="sections-count">0</h3>
+                        <p>Sections</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Events Section -->
+        <section id="events-section" class="content-section">
+            <div class="section-header">
+                <h2>Events Management</h2>
+                <button class="btn btn-primary" id="add-event-btn">+ Add Event</button>
+            </div>
+            <div class="table-container">
+                <div class="table-controls">
+                    <input type="text" id="events-search" class="search-input" placeholder="Search events...">
+                </div>
+                <table class="data-table" id="events-table">
+                    <thead>
+                        <tr>
+                            <th>Image</th>
+                            <th>Title (EN)</th>
+                            <th>Title (GE)</th>
+                            <th>Date</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="events-tbody">
+                        <tr>
+                            <td colspan="5" class="loading">Loading events...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Upcoming Events Section -->
+        <section id="upcoming-section" class="content-section">
+            <div class="section-header">
+                <h2>Upcoming Events Management</h2>
+                <button class="btn btn-primary" id="add-upcoming-btn">+ Add Upcoming Event</button>
+            </div>
+            <div class="table-container">
+                <div class="table-controls">
+                    <input type="text" id="upcoming-search" class="search-input"
+                        placeholder="Search upcoming events...">
+                </div>
+                <table class="data-table" id="upcoming-table">
+                    <thead>
+                        <tr>
+                            <th>Image</th>
+                            <th>Title (EN)</th>
+                            <th>Title (GE)</th>
+                            <th>Start Date</th>
+                            <th>End Date</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="upcoming-tbody">
+                        <tr>
+                            <td colspan="6" class="loading">Loading upcoming events...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Activities Section -->
+        <section id="activities-section" class="content-section">
+            <div class="section-header">
+                <h2>Activities Management</h2>
+                <button class="btn btn-primary" id="add-activity-btn">+ Add Activity</button>
+            </div>
+            <div class="table-container">
+                <div class="table-controls">
+                    <input type="text" id="activities-search" class="search-input" placeholder="Search activities...">
+                </div>
+                <table class="data-table" id="activities-table">
+                    <thead>
+                        <tr>
+                            <th>Image</th>
+                            <th>Title (EN)</th>
+                            <th>Title (GE)</th>
+                            <th>Date</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="activities-tbody">
+                        <tr>
+                            <td colspan="5" class="loading">Loading activities...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- About Section -->
+        <section id="about-section" class="content-section">
+            <div class="section-header">
+                <h2>About Information</h2>
+            </div>
+            <div class="form-container">
+                <form id="about-form" class="admin-form">
+                    <div class="form-group">
+                        <label>Title (Georgian)</label>
+                        <input type="text" id="about-title-geo" class="form-input" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Title (English)</label>
+                        <input type="text" id="about-title-eng" class="form-input" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Content (Georgian)</label>
+                        <textarea id="about-content-geo" class="form-textarea" rows="6" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Content (English)</label>
+                        <textarea id="about-content-eng" class="form-textarea" rows="6" required></textarea>
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">Save About Info</button>
+                    </div>
+                </form>
+            </div>
+        </section>
+
+        <!-- Sections Section -->
+        <section id="sections-section" class="content-section">
+            <div class="section-header">
+                <h2>Sections Management</h2>
+                <button class="btn btn-primary" id="add-section-btn">+ Add Section</button>
+            </div>
+            <div class="table-container">
+                <table class="data-table" id="sections-table">
+                    <thead>
+                        <tr>
+                            <th>Title (EN)</th>
+                            <th>Title (GE)</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="sections-tbody">
+                        <tr>
+                            <td colspan="3" class="loading">Loading sections...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Contact Section -->
+        <section id="contact-section" class="content-section">
+            <div class="section-header">
+                <h2>Contact Information</h2>
+            </div>
+            <div class="form-container">
+                <form id="contact-form" class="admin-form">
+                    <div class="form-group">
+                        <label>Phone</label>
+                        <input type="text" id="contact-phone" class="form-input" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Email</label>
+                        <input type="email" id="contact-email" class="form-input" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Address (Georgian)</label>
+                        <input type="text" id="contact-address-geo" class="form-input" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Address (English)</label>
+                        <input type="text" id="contact-address-eng" class="form-input" required>
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">Save Contact Info</button>
+                    </div>
+                </form>
+            </div>
+        </section>
+
+        <!-- Users Section -->
+        <section id="users-section" class="content-section">
+            <div class="section-header">
+                <h2>User Management</h2>
+                <button class="btn btn-primary" id="add-user-btn">+ Add User</button>
+            </div>
+            <div class="table-container">
+                <table class="data-table" id="users-table">
+                    <thead>
+                        <tr>
+                            <th>Username</th>
+                            <th>Created At</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="users-tbody">
+                        <tr>
+                            <td colspan="3" class="loading">Loading users...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+
+    <!-- Modals -->
+    <!-- Event Modal -->
+    <div id="event-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="event-modal-title">Add Event</h2>
+                <button class="modal-close" data-modal="event-modal">&times;</button>
+            </div>
+            <form id="event-form" class="admin-form">
+                <input type="hidden" id="event-id">
+                <div class="form-group">
+                    <label>Title (Georgian) *</label>
+                    <input type="text" id="event-title-geo" class="form-input" required>
+                </div>
+                <div class="form-group">
+                    <label>Title (English) *</label>
+                    <input type="text" id="event-title-eng" class="form-input" required>
+                </div>
+                <div class="form-group">
+                    <label>Event Date *</label>
+                    <input type="datetime-local" id="event-date" class="form-input" required>
+                </div>
+                <div class="form-group">
+                    <label>Image</label>
+                    <input type="file" id="event-image" class="form-input" accept="image/*">
+                    <div id="event-image-preview" class="image-preview"></div>
+                </div>
+
+                <!-- Custom Fields Section -->
+                <div class="form-group">
+                    <label>Custom Dynamic Fields</label>
+                    <div id="event-custom-fields-container"></div>
+                    <button type="button" class="btn btn-secondary" onclick="addCustomField('event')">+ Add Custom
+                        Field</button>
+                </div>
+
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" data-modal="event-modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save Event</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Upcoming Event Modal -->
+    <div id="upcoming-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="upcoming-modal-title">Add Upcoming Event</h2>
+                <button class="modal-close" data-modal="upcoming-modal">&times;</button>
+            </div>
+            <form id="upcoming-form" class="admin-form">
+                <input type="hidden" id="upcoming-id">
+                <div class="form-group">
+                    <label>Title (Georgian) *</label>
+                    <input type="text" id="upcoming-title-geo" class="form-input" required>
+                </div>
+                <div class="form-group">
+                    <label>Title (English) *</label>
+                    <input type="text" id="upcoming-title-eng" class="form-input" required>
+                </div>
+                <div class="form-group">
+                    <label>Location (Georgian)</label>
+                    <input type="text" id="upcoming-location-geo" class="form-input">
+                </div>
+                <div class="form-group">
+                    <label>Location (English)</label>
+                    <input type="text" id="upcoming-location-eng" class="form-input">
+                </div>
+                <div class="form-group">
+                    <label>Start Date *</label>
+                    <input type="datetime-local" id="upcoming-start-date" class="form-input" required>
+                </div>
+                <div class="form-group">
+                    <label>End Date *</label>
+                    <input type="datetime-local" id="upcoming-end-date" class="form-input" required>
+                </div>
+                <div class="form-group">
+                    <label>Image</label>
+                    <input type="file" id="upcoming-image" class="form-input" accept="image/*">
+                    <div id="upcoming-image-preview" class="image-preview"></div>
+                </div>
+
+                <!-- Custom Fields Section -->
+                <div class="form-group">
+                    <label>Custom Dynamic Fields</label>
+                    <div id="upcoming-custom-fields-container"></div>
+                    <button type="button" class="btn btn-secondary" onclick="addCustomField('upcoming')">+ Add Custom
+                        Field</button>
+                </div>
+
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" data-modal="upcoming-modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save Upcoming Event</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Activity Modal -->
+    <div id="activity-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="activity-modal-title">Add Activity</h2>
+                <button class="modal-close" data-modal="activity-modal">&times;</button>
+            </div>
+            <form id="activity-form" class="admin-form">
+                <input type="hidden" id="activity-id">
+                <div class="form-group">
+                    <label>Title (Georgian) *</label>
+                    <input type="text" id="activity-title-geo" class="form-input" required>
+                </div>
+                <div class="form-group">
+                    <label>Title (English) *</label>
+                    <input type="text" id="activity-title-eng" class="form-input" required>
+                </div>
+                <div class="form-group">
+                    <label>Activity Date *</label>
+                    <input type="datetime-local" id="activity-date" class="form-input" required>
+                </div>
+                <div class="form-group">
+                    <label>Image</label>
+                    <input type="file" id="activity-image" class="form-input" accept="image/*">
+                    <div id="activity-image-preview" class="image-preview"></div>
+                </div>
+
+                <!-- Custom Fields Section -->
+                <div class="form-group">
+                    <label>Custom Dynamic Fields</label>
+                    <div id="activity-custom-fields-container"></div>
+                    <button type="button" class="btn btn-secondary" onclick="addCustomField('activity')">+ Add Custom
+                        Field</button>
+                </div>
+
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" data-modal="activity-modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save Activity</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Section Modal -->
+    <div id="section-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="section-modal-title">Add Section</h2>
+                <button class="modal-close" data-modal="section-modal">&times;</button>
+            </div>
+            <form id="section-form" class="admin-form">
+                <input type="hidden" id="section-id">
+                <div class="form-group">
+                    <label>Title (Georgian) *</label>
+                    <input type="text" id="section-title-geo" class="form-input" required>
+                </div>
+                <div class="form-group">
+                    <label>Title (English) *</label>
+                    <input type="text" id="section-title-eng" class="form-input" required>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" data-modal="section-modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save Section</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- User Modal -->
+    <div id="user-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="user-modal-title">Add User</h2>
+                <button class="modal-close" data-modal="user-modal">&times;</button>
+            </div>
+            <form id="user-form" class="admin-form">
+                <input type="hidden" id="user-id">
+                <div class="form-group">
+                    <label>Username *</label>
+                    <input type="text" id="user-username" class="form-input" required>
+                </div>
+                <div class="form-group">
+                    <label id="user-password-label">Password *</label>
+                    <input type="password" id="user-password" class="form-input" required>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" data-modal="user-modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save User</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast"></div>
+
+    <div id="toast" class="toast"></div>
+
+    <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
+    <script src="admin.js"></script>
+</body>
+
+</html>

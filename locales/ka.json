@@ -1,0 +1,42 @@
+{
+    "header": {
+        "title": "საქართველოს ალერგოლოგიისა და კლინიკური იმუნოლოგიის ასოციაცია (საკია)",
+        "language_toggle": "ENG",
+        "skip_link": "გადადით ძირითად შინაარსზე"
+    },
+    "sidebar": {
+        "brand": "საკია",
+        "publications": "პუბლიკაციები",
+        "congresses": "მომავალი კონგრესები",
+        "archive": "არქივის ღონისძიებები",
+        "activities": "აქტივობები",
+        "news": "სიახლეები"
+    },
+    "general": {
+        "sections_title": "ასოციაციის სექციები"
+    },
+    "footer": {
+        "gallery": "გალერეა",
+        "membership": "ასოციაციაში გაწევრიანება",
+        "contact": "საკონტაქტო ინფორმაცია",
+        "copyright": "© 2025 www.gaaci.ge",
+        "phone_label": "ტელეფონი:",
+        "email_label": "ელ-ფოსტა:",
+        "address_label": "მისამართი:"
+    },
+    "countdown": {
+        "day": "დღე",
+        "hour": "საათი",
+        "min": "წუთი",
+        "sec": "წამი"
+    },
+    "dropdown": {
+        "no_archive_events": "არქივში ღონისძიებები არ არის",
+        "no_upcoming_events": "მომავალი ღონისძიებები არ არის",
+        "no_activities": "აქტივობები არ არის",
+        "error_loading": "შეცდომა მონაცემების ჩატვირთვისას"
+    },
+    "detail": {
+        "back": "← მთავარზე დაბრუნება"
+    }
+}
