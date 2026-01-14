@@ -10,7 +10,8 @@
         "congresses": "Upcoming Congresses",
         "archive": "Archive Events",
         "activities": "Activities",
-        "news": "News"
+        "news": "News",
+        "next_event": "Next Event"
     },
     "general": {
         "sections_title": "Association Sections"
@@ -38,5 +39,15 @@
     },
     "detail": {
         "back": "← Back to Home"
+    },
+    "contact": {
+        "send_message": "Send us a message",
+        "name": "Name",
+        "email": "Email",
+        "subject": "Subject",
+        "message": "Message",
+        "submit": "Send Message",
+        "sending": "Sending...",
+        "success": "Message sent successfully!"
     }
 }

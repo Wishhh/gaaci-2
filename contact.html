@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact - Georgia Association of Allergology and Clinical Immunology</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/dejavu-sans@1.0.0/css/dejavu-sans.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/dejavu-sans-bold@1.0.0/css/dejavu-sans-bold.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+</head>
+
+<body class="page-contact">
+    <a href="#main-content" class="skip-link" data-i18n="header.skip_link">Skip to main content</a>
+    <div class="container">
+        <!-- Header Section -->
+        <header class="header">
+            <div class="logo-left">
+                <a href="index.html"><img src="images/logo.png" alt="GAACI Logo"></a>
+            </div>
+            <h1 class="organization-title" data-i18n="header.title">Loading...</h1>
+            <nav class="header-nav">
+                <button id="language-toggle" class="language-toggle">ENG</button>
+                <button id="theme-toggle" class="theme-toggle">🎨</button>
+            </nav>
+        </header>
+
+        <!-- Main Content Area -->
+        <main id="main-content" class="main-content">
+
+            <!-- Lower Section with Sidebar -->
+            <section class="lower-section">
+                <!-- Left Sidebar -->
+                <aside class="sidebar">
+                    <nav class="sidebar-nav">
+                        <a href="about.html" class="sidebar-item" data-event-type="about"><span class="brand-text"
+                                data-i18n="sidebar.brand">GAACI</span></a>
+                        <a href="publications.html" class="sidebar-item"><span class="brand-text"
+                                data-i18n="sidebar.brand">GAACI</span>
+                            <span data-i18n="sidebar.publications">Publications</span></a>
+                        <a href="index.html#upcoming-section" class="sidebar-item" data-event-type="upcoming"><span
+                                class="brand-text" data-i18n="sidebar.brand">GAACI</span>
+                            <span data-i18n="sidebar.congresses">Congresses</span></a>
+                        <a href="index.html#archive-section" class="sidebar-item" data-event-type="archive"><span
+                                class="brand-text" data-i18n="sidebar.brand">GAACI</span>
+                            <span data-i18n="sidebar.archive">Archive</span></a>
+                        <a href="index.html#activities-section" class="sidebar-item" data-event-type="activities"><span
+                                class="brand-text" data-i18n="sidebar.brand">GAACI</span>
+                            <span data-i18n="sidebar.activities">Activities</span></a>
+                        <a href="index.html#news-section" class="sidebar-item" data-i18n="sidebar.news">News</a>
+                    </nav>
+                    </nav>
+                </aside>
+
+                <!-- Contact Content -->
+                <div class="content-area" style="width: 100%; padding: 20px;">
+                    <section class="contact-section" id="contact-section">
+                        <h2 class="section-title" data-i18n="footer.contact">Contact Information</h2>
+
+                        <div class="contact-grid"
+                            style="display: grid; grid-template-columns: 1fr 1fr; gap: 40px; margin-bottom: 30px;">
+                            <!-- Left Column: Info -->
+                            <div class="contact-info-col">
+                                <div class="contact-info">
+                                    <div class="contact-item">
+                                        <strong><span data-i18n="footer.phone_label">Phone:</span></strong> <span
+                                            id="contact-phone"></span>
+                                    </div>
+                                    <div class="contact-item">
+                                        <strong><span data-i18n="footer.email_label">Email:</span></strong> <span
+                                            id="contact-email"></span>
+                                    </div>
+                                    <div class="contact-item">
+                                        <strong><span data-i18n="footer.address_label">Address:</span></strong> <span
+                                            id="contact-address"></span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Right Column: Form -->
+                            <div class="contact-form-col">
+                                <h3 style="margin-bottom: 20px; color: var(--primary-blue);"
+                                    data-i18n="contact.send_message">Send us a message</h3>
+                                <form id="contact-form-page" class="modern-form">
+                                    <div class="form-group" style="margin-bottom: 15px;">
+                                        <label for="contact-name"
+                                            style="display: block; margin-bottom: 5px; color: var(--text-primary);"
+                                            data-i18n="contact.name">Name</label>
+                                        <input type="text" id="contact-name" required
+                                            style="width: 100%; padding: 10px; border: 1px solid var(--border-color); border-radius: 4px;">
+                                    </div>
+                                    <div class="form-group" style="margin-bottom: 15px;">
+                                        <label for="contact-email-input"
+                                            style="display: block; margin-bottom: 5px; color: var(--text-primary);"
+                                            data-i18n="contact.email">Email</label>
+                                        <input type="email" id="contact-email-input" required
+                                            style="width: 100%; padding: 10px; border: 1px solid var(--border-color); border-radius: 4px;">
+                                    </div>
+                                    <div class="form-group" style="margin-bottom: 15px;">
+                                        <label for="contact-subject"
+                                            style="display: block; margin-bottom: 5px; color: var(--text-primary);"
+                                            data-i18n="contact.subject">Subject</label>
+                                        <input type="text" id="contact-subject" required
+                                            style="width: 100%; padding: 10px; border: 1px solid var(--border-color); border-radius: 4px;">
+                                    </div>
+                                    <div class="form-group" style="margin-bottom: 15px;">
+                                        <label for="contact-message"
+                                            style="display: block; margin-bottom: 5px; color: var(--text-primary);"
+                                            data-i18n="contact.message">Message</label>
+                                        <textarea id="contact-message" rows="5" required
+                                            style="width: 100%; padding: 10px; border: 1px solid var(--border-color); border-radius: 4px; resize: vertical;"></textarea>
+                                    </div>
+                                    <button type="submit"
+                                        style="background-color: var(--primary-blue); color: white; border: none; padding: 12px 24px; border-radius: 4px; cursor: pointer; font-size: 16px; transition: background 0.3s;"
+                                        data-i18n="contact.submit">Send Message</button>
+                                </form>
+                                <div id="form-message" style="margin-top: 15px; display: none;"></div>
+                            </div>
+                        </div>
+
+                        <div id="map"
+                            style="height: 400px; width: 100%; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); z-index: 1;">
+                        </div>
+                    </section>
+                </div>
+            </section>
+        </main>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="footer-content">
+                <div class="footer-links">
+                    <a href="index.html#gallery-section" data-i18n="footer.gallery">Gallery</a>
+                    <a href="membership.html" data-i18n="footer.membership">Membership</a>
+                    <a href="publications.html" data-i18n="sidebar.publications">Publications</a>
+                    <a href="contact.html" data-i18n="footer.contact">Contact</a>
+                </div>
+                <div class="footer-logo">
+                    <img src="images/logo.png" alt="GAACI Logo">
+                </div>
+                <div class="footer-copyright" data-i18n="footer.copyright">© 2025 www.gaaci.ge</div>
+            </div>
+        </footer>
+    </div>
+    <script src="script.js"></script>
+</body>
+
+</html>

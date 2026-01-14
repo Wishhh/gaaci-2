@@ -106,6 +106,17 @@ router.get('/sections', async (req, res) => {
     }
 });
 
+// Get Publications (Public)
+router.get('/publications', async (req, res) => {
+    try {
+        const [rows] = await db.query('SELECT * FROM publications ORDER BY order_index ASC, created_at DESC');
+        res.json(rows);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: 'Server error' });
+    }
+});
+
 // Get Contact Info
 router.get('/contact', async (req, res) => {
     try {
@@ -200,7 +211,7 @@ router.post('/admin/login', async (req, res) => {
         if (!match) {
             return res.status(401).json({ message: 'Invalid credentials' });
         }
-        const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+        const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, { expiresIn: '10h' });
         res.json({ token });
     } catch (err) {
         console.error(err);
@@ -597,6 +608,149 @@ router.delete('/admin/users/:id', verifyToken, async (req, res) => {
         }
         await db.query('DELETE FROM users WHERE id = ?', [req.params.id]);
         res.json({ message: 'User deleted successfully' });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: 'Server error' });
+    }
+});
+
+// --- Employee Routes ---
+
+// Get all employees
+router.get('/employees', async (req, res) => {
+    try {
+        const [rows] = await db.query('SELECT * FROM employees ORDER BY order_index ASC');
+        res.json(rows);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: 'Server error' });
+    }
+});
+
+// Create Employee
+router.post('/employees', verifyToken, upload.single('image'), async (req, res) => {
+    const { name_geo, name_eng, details_geo, details_eng, order_index } = req.body;
+    const image_url = req.file ? `/uploads/${req.file.filename}` : null;
+    try {
+        await db.query(
+            'INSERT INTO employees (name_geo, name_eng, details_geo, details_eng, image_url, order_index) VALUES (?, ?, ?, ?, ?, ?)',
+            [name_geo, name_eng, details_geo, details_eng, image_url, order_index || 0]
+        );
+        res.status(201).json({ message: 'Employee added successfully' });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: 'Server error' });
+    }
+});
+
+// Update Employee
+router.put('/employees/:id', verifyToken, upload.single('image'), async (req, res) => {
+    const { name_geo, name_eng, details_geo, details_eng, order_index } = req.body;
+    try {
+        let updateQuery = 'UPDATE employees SET name_geo = ?, name_eng = ?, details_geo = ?, details_eng = ?, order_index = ?';
+        let params = [name_geo, name_eng, details_geo, details_eng, order_index];
+
+        if (req.file) {
+            updateQuery += ', image_url = ?';
+            params.push(`/uploads/${req.file.filename}`);
+        }
+
+        updateQuery += ' WHERE id = ?';
+        params.push(req.params.id);
+
+        await db.query(updateQuery, params);
+        res.json({ message: 'Employee updated successfully' });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: 'Server error' });
+    }
+});
+
+// Delete Employee
+router.delete('/employees/:id', verifyToken, async (req, res) => {
+    try {
+        await db.query('DELETE FROM employees WHERE id = ?', [req.params.id]);
+        res.json({ message: 'Employee deleted successfully' });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: 'Server error' });
+    }
+});
+
+// --- Publications Admin Routes ---
+
+// Get all publications (for admin)
+router.get('/publications/all', verifyToken, async (req, res) => {
+    try {
+        const [rows] = await db.query('SELECT * FROM publications ORDER BY order_index ASC, created_at DESC');
+        res.json(rows);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: 'Server error' });
+    }
+});
+
+// Create Publication
+router.post('/publications', verifyToken, async (req, res) => {
+    const { title_geo, title_eng, link, order_index } = req.body;
+    
+    // Validate required fields
+    if (!title_geo || !title_eng || !link) {
+        return res.status(400).json({ message: 'Title (both languages) and link are required' });
+    }
+
+    // Validate URL format
+    try {
+        new URL(link);
+    } catch (e) {
+        return res.status(400).json({ message: 'Invalid URL format' });
+    }
+
+    try {
+        await db.query(
+            'INSERT INTO publications (title_geo, title_eng, link, order_index) VALUES (?, ?, ?, ?)',
+            [title_geo, title_eng, link, order_index || 0]
+        );
+        res.status(201).json({ message: 'Publication added successfully' });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: 'Server error' });
+    }
+});
+
+// Update Publication
+router.put('/publications/:id', verifyToken, async (req, res) => {
+    const { title_geo, title_eng, link, order_index } = req.body;
+    
+    // Validate required fields
+    if (!title_geo || !title_eng || !link) {
+        return res.status(400).json({ message: 'Title (both languages) and link are required' });
+    }
+
+    // Validate URL format
+    try {
+        new URL(link);
+    } catch (e) {
+        return res.status(400).json({ message: 'Invalid URL format' });
+    }
+
+    try {
+        await db.query(
+            'UPDATE publications SET title_geo = ?, title_eng = ?, link = ?, order_index = ? WHERE id = ?',
+            [title_geo, title_eng, link, order_index || 0, req.params.id]
+        );
+        res.json({ message: 'Publication updated successfully' });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: 'Server error' });
+    }
+});
+
+// Delete Publication
+router.delete('/publications/:id', verifyToken, async (req, res) => {
+    try {
+        await db.query('DELETE FROM publications WHERE id = ?', [req.params.id]);
+        res.json({ message: 'Publication deleted successfully' });
     } catch (err) {
         console.error(err);
         res.status(500).json({ message: 'Server error' });

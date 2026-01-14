@@ -30,6 +30,14 @@
         <main id="main-content" class="main-content">
             <!-- Top Section -->
             <section class="top-section" id="upcoming-section">
+                <!-- Left Sidebar: Next Event -->
+                <aside class="sidebar activity-sidebar">
+                    <div id="second-event-container" style="display: flex; flex-direction: column; gap: 15px;">
+                        <!-- Loaded via JS -->
+                    </div>
+                </aside>
+
+                <!-- Right Content: Existing Hero -->
                 <div class="event-block congress-block">
                     <div class="event-image">
                         <img id="upcoming-image" src="images/upcoming.png" alt="Upcoming Event">
@@ -66,7 +74,7 @@
                     <nav class="sidebar-nav">
                         <a href="about.html" class="sidebar-item" data-event-type="about"><span class="brand-text"
                                 data-i18n="sidebar.brand">GAACI</span></a>
-                        <a href="#publications-section" class="sidebar-item"><span class="brand-text"
+                        <a href="publications.html" class="sidebar-item"><span class="brand-text"
                                 data-i18n="sidebar.brand">GAACI</span>
                             <span data-i18n="sidebar.publications">Publications</span></a>
                         <a href="#upcoming-section" class="sidebar-item" data-event-type="upcoming"><span
@@ -119,8 +127,9 @@
             <div class="footer-content">
                 <div class="footer-links">
                     <a href="#gallery-section" data-i18n="footer.gallery">Gallery</a>
-                    <a href="#membership-section" data-i18n="footer.membership">Membership</a>
-                    <a href="about.html#contact-section" data-i18n="footer.contact">Contact</a>
+                    <a href="membership.html" data-i18n="footer.membership">Membership</a>
+                    <a href="publications.html" data-i18n="sidebar.publications">Publications</a>
+                    <a href="contact.html" data-i18n="footer.contact">Contact</a>
                 </div>
                 <div class="footer-logo">
                     <img src="images/logo.png" alt="GAACI Logo">

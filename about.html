@@ -11,7 +11,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/dejavu-sans-bold@1.0.0/css/dejavu-sans-bold.min.css">
 </head>
 
-<body>
+<body class="page-about">
     <a href="#main-content" class="skip-link" data-i18n="header.skip_link">Skip to main content</a>
     <div class="container">
         <!-- Header Section -->
@@ -34,22 +34,21 @@
                 <!-- Left Sidebar -->
                 <aside class="sidebar">
                     <nav class="sidebar-nav">
-                        <a href="about.html" class="sidebar-item active"><span class="brand-text"
+                        <a href="about.html" class="sidebar-item" data-event-type="about"><span class="brand-text"
                                 data-i18n="sidebar.brand">GAACI</span></a>
-                        <a href="index.html#publications-section" class="sidebar-item"><span class="brand-text"
+                        <a href="publications.html" class="sidebar-item"><span class="brand-text"
                                 data-i18n="sidebar.brand">GAACI</span>
                             <span data-i18n="sidebar.publications">Publications</span></a>
-                        <a href="index.html#upcoming-section" class="sidebar-item"><span class="brand-text"
-                                data-i18n="sidebar.brand">GAACI</span>
+                        <a href="index.html#upcoming-section" class="sidebar-item" data-event-type="upcoming"><span
+                                class="brand-text" data-i18n="sidebar.brand">GAACI</span>
                             <span data-i18n="sidebar.congresses">Congresses</span></a>
-                        <a href="index.html#archive-section" class="sidebar-item"><span class="brand-text"
-                                data-i18n="sidebar.brand">GAACI</span>
+                        <a href="index.html#archive-section" class="sidebar-item" data-event-type="archive"><span
+                                class="brand-text" data-i18n="sidebar.brand">GAACI</span>
                             <span data-i18n="sidebar.archive">Archive</span></a>
-                        <a href="index.html#activities-section" class="sidebar-item"><span class="brand-text"
-                                data-i18n="sidebar.brand">GAACI</span>
+                        <a href="index.html#activities-section" class="sidebar-item" data-event-type="activities"><span
+                                class="brand-text" data-i18n="sidebar.brand">GAACI</span>
                             <span data-i18n="sidebar.activities">Activities</span></a>
                         <a href="index.html#news-section" class="sidebar-item" data-i18n="sidebar.news">News</a>
-                    </nav>
                     </nav>
                 </aside>
 
@@ -73,22 +72,12 @@
                 </div>
             </section>
 
-            <!-- Contact Section -->
-            <section class="contact-section" id="contact-section">
-                <h2 class="section-title" data-i18n="footer.contact">Contact Information</h2>
-                <div class="contact-info">
-                    <div class="contact-item">
-                        <strong><span data-i18n="footer.phone_label">Phone:</span></strong> <span
-                            id="contact-phone"></span>
-                    </div>
-                    <div class="contact-item">
-                        <strong><span data-i18n="footer.email_label">Email:</span></strong> <span
-                            id="contact-email"></span>
-                    </div>
-                    <div class="contact-item">
-                        <strong><span data-i18n="footer.address_label">Address:</span></strong> <span
-                            id="contact-address"></span>
-                    </div>
+            <!-- Organizational Structure Section -->
+            <section class="structure-section" id="structure-section" style="padding: 20px;">
+                <h2 class="section-title" data-i18n="about.structure_title">Organizational Structure</h2>
+                <div class="employees-grid" id="employees-grid"
+                    style="display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px;">
+                    <!-- Employees will be loaded here -->
                 </div>
             </section>
         </main>
@@ -98,8 +87,9 @@
             <div class="footer-content">
                 <div class="footer-links">
                     <a href="index.html#gallery-section" data-i18n="footer.gallery">Gallery</a>
-                    <a href="index.html#membership-section" data-i18n="footer.membership">Membership</a>
-                    <a href="#contact-section" data-i18n="footer.contact">Contact</a>
+                    <a href="membership.html" data-i18n="footer.membership">Membership</a>
+                    <a href="publications.html" data-i18n="sidebar.publications">Publications</a>
+                    <a href="contact.html" data-i18n="footer.contact">Contact</a>
                 </div>
                 <div class="footer-logo">
                     <img src="images/logo.png" alt="GAACI Logo">

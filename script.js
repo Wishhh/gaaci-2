@@ -46,6 +46,7 @@ document.addEventListener('DOMContentLoaded', function () {
         fetchSections();
         fetchContactInfo();
         fetchUpcomingEvent();
+        fetchPublications();
 
         // Update events content if they exist (re-fetch to update language)
         const archiveEventsContent = document.querySelector('.sidebar-item[data-event-type="archive"] .sidebar-events-content');
@@ -61,6 +62,15 @@ document.addEventListener('DOMContentLoaded', function () {
         if (activitiesEventsContent && activitiesEventsContent.hasChildNodes() && !activitiesEventsContent.querySelector('.sidebar-events-empty')) {
             fetchActivities();
         }
+
+        // Fetch Employees if on about page
+        const employeesGrid = document.getElementById('employees-grid');
+        if (employeesGrid) {
+            fetchEmployees();
+        }
+
+        // Fetch second upcoming event for top sidebar
+        fetchSecondUpcomingEvent();
     }
 
     const languageToggle = document.getElementById('language-toggle');
@@ -370,15 +380,15 @@ document.addEventListener('DOMContentLoaded', function () {
 
             aboutItem.addEventListener('mouseenter', () => {
                 const itemsGeo = [
-                    'საკია',
-                    'აღმასრულებელი კომიტეტი',
+                    'საკია-ს შესახებ',
+                    'კონტაქტი',
                     'წევრობა',
                     'საკიაში ონლაინ გაწევრიანება'
                 ];
 
                 const itemsEng = [
-                    'GAACI',
-                    'Executive Committee',
+                    'about GAACI',
+                    'Contact',
                     'Membership',
                     'Join GAACI Online'
                 ];
@@ -388,8 +398,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
                 const items = currentLanguage === 'geo' ? itemsGeo : itemsEng;
                 const links = currentLanguage === 'geo' ?
-                    ['about.html', 'about.html', 'index.html#membership-section', 'index.html#membership-section'] :
-                    ['about.html', 'about.html', 'index.html#membership-section', 'index.html#membership-section'];
+                    ['about.html', 'contact.html', 'membership.html', 'membership.html'] :
+                    ['about.html', 'contact.html', 'membership.html', 'membership.html'];
 
                 items.forEach((text, index) => {
                     const item = document.createElement('a');
@@ -684,11 +694,187 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
+    // Fetch Employees (Organizational Structure)
+    async function fetchEmployees() {
+        const grid = document.getElementById('employees-grid');
+        if (!grid) return;
+
+        try {
+            const res = await fetch('http://localhost:5000/api/employees');
+            const employees = await res.json();
+
+            grid.innerHTML = '';
+            if (employees.length === 0) {
+                grid.innerHTML = '<p>No employees found.</p>';
+                return;
+            }
+
+            employees.forEach(emp => {
+                const card = document.createElement('div');
+                card.className = 'employee-card';
+                card.style.cssText = 'background: var(--card-bg); border-radius: 8px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.1); transition: transform 0.3s ease;';
+                card.onmouseover = function () { this.style.transform = 'translateY(-5px)'; };
+                card.onmouseout = function () { this.style.transform = 'translateY(0)'; };
+
+                const name = currentLanguage === 'geo' ? emp.name_geo : emp.name_eng;
+                const details = currentLanguage === 'geo' ? emp.details_geo : emp.details_eng;
+                const imageUrl = emp.image_url || 'images/logo.png';
+
+                card.innerHTML = `
+                    <div style="height: 200px; overflow: hidden;">
+                        <img src="${imageUrl}" alt="${name}" style="width: 100%; height: 100%; object-fit: cover;">
+                    </div>
+                    <div style="padding: 15px;">
+                        <h3 style="font-size: 18px; margin-bottom: 10px; color: var(--accent-yellow);">${name}</h3>
+                        <p style="font-size: 14px; color: var(--text-primary); line-height: 1.4;">${details || ''}</p>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        } catch (err) {
+            console.error('Failed to fetch employees:', err);
+        }
+    }
+
+    // Fetch Second Upcoming Event for Top Sidebar
+    async function fetchSecondUpcomingEvent() {
+        const container = document.getElementById('second-event-container');
+        if (!container) return;
+
+        try {
+            const res = await fetch('http://localhost:5000/api/events/upcoming');
+            const events = await res.json();
+
+            container.innerHTML = '';
+
+            // We need the second event (index 1) - index 0 is in the main hero
+            if (events.length < 2) {
+                const noEventMsg = currentLanguage === 'geo' ? 'მომავალი ღონისძიება არ არის' : 'No upcoming event';
+                container.innerHTML = `<p style="color:var(--text-secondary); text-align:center;">${noEventMsg}</p>`;
+                return;
+            }
+
+            const nextEvent = events[1]; // Get the second one
+
+            const item = document.createElement('a');
+            item.href = 'event-detail.html?id=' + nextEvent.id + '&type=upcoming';
+            item.className = 'activity-mini-card';
+
+            const title = currentLanguage === 'geo' ? nextEvent.title_geo : nextEvent.title_eng;
+            const imagePath = nextEvent.image_url || 'images/upcoming.png';
+
+            item.innerHTML = `
+                <div class="activity-image">
+                    <img src="${imagePath}" alt="${title}">
+                </div>
+                <div class="activity-info">
+                    <div class="activity-title">${title}</div>
+                </div>
+            `;
+            container.appendChild(item);
+
+        } catch (err) {
+            console.error('Failed to fetch second upcoming event:', err);
+        }
+    }
+
+    // Fetch Publications
+    async function fetchPublications() {
+        const container = document.getElementById('publications-container');
+        if (!container) return;
+
+        try {
+            const res = await fetch('http://localhost:5000/api/publications');
+            const publications = await res.json();
+
+            container.innerHTML = '';
+
+            if (publications && publications.length > 0) {
+                publications.forEach(publication => {
+                    const item = document.createElement('a');
+                    item.href = publication.link;
+                    item.target = '_blank';
+                    item.rel = 'noopener noreferrer';
+                    item.className = 'publication-item';
+
+                    const title = currentLanguage === 'geo' ? publication.title_geo : publication.title_eng;
+
+                    item.innerHTML = `
+                        <h3 class="publication-title">${title}</h3>
+                    `;
+                    container.appendChild(item);
+                });
+            } else {
+                const emptyMsg = currentLanguage === 'geo' ? 'პუბლიკაციები არ არის' : 'No publications available';
+                container.innerHTML = `<div class="publications-empty">${emptyMsg}</div>`;
+            }
+        } catch (err) {
+            console.error('Failed to fetch publications:', err);
+            const errorMsg = currentLanguage === 'geo' ? 'შეცდომა მონაცემების ჩატვირთვისას' : 'Error loading publications';
+            container.innerHTML = `<div class="publications-empty">${errorMsg}</div>`;
+        }
+    }
+
     // Initial Load
     loadTranslations(currentLanguage);
 
     // Initialize sidebar dropdowns after DOM is ready
     setTimeout(() => {
         initializeSidebarDropdowns();
+        initMap();
+        initContactForm();
     }, 100);
+
+    // Initialize Map
+    function initMap() {
+        const mapElement = document.getElementById('map');
+        if (!mapElement) return;
+
+        // Coordinates for Tbilisi
+        const lat = 41.7151;
+        const lng = 44.8271;
+
+        const map = L.map('map').setView([lat, lng], 13);
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+
+        L.marker([lat, lng]).addTo(map)
+            .bindPopup('GAACI<br> Tbilisi, Georgia')
+            .openPopup();
+    }
+
+    // Initialize Contact Form
+    function initContactForm() {
+        const form = document.getElementById('contact-form-page');
+        if (!form) return;
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const submitBtn = form.querySelector('button[type="submit"]');
+            const originalText = submitBtn.textContent;
+            submitBtn.textContent = 'Sending...';
+            submitBtn.disabled = true;
+
+            // Simulate API call
+            await new Promise(resolve => setTimeout(resolve, 1500));
+
+            // Show success message
+            const messageDiv = document.getElementById('form-message');
+            messageDiv.style.display = 'block';
+            messageDiv.style.color = 'green';
+            messageDiv.textContent = 'Message sent successfully! We will get back to you soon.';
+
+            form.reset();
+            submitBtn.textContent = originalText;
+            submitBtn.disabled = false;
+
+            // Hide message after 5 seconds
+            setTimeout(() => {
+                messageDiv.style.display = 'none';
+            }, 5000);
+        });
+    }
 });

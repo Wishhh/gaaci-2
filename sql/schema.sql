@@ -12,8 +12,6 @@ CREATE TABLE IF NOT EXISTS events (
     id INT AUTO_INCREMENT PRIMARY KEY,
     title_geo VARCHAR(255) NOT NULL,
     title_eng VARCHAR(255) NOT NULL,
-    details_geo TEXT,
-    details_eng TEXT,
     image_url VARCHAR(255),
     event_date DATETIME,
     custom_fields JSON DEFAULT NULL,
@@ -58,10 +56,28 @@ CREATE TABLE IF NOT EXISTS activities (
     id INT AUTO_INCREMENT PRIMARY KEY,
     title_geo VARCHAR(255) NOT NULL,
     title_eng VARCHAR(255) NOT NULL,
-    details_geo TEXT,
-    details_eng TEXT,
     image_url VARCHAR(255),
     activity_date DATETIME,
     custom_fields JSON DEFAULT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS employees (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name_geo VARCHAR(255) NOT NULL,
+    name_eng VARCHAR(255) NOT NULL,
+    image_url VARCHAR(255),
+    details_geo TEXT,
+    details_eng TEXT,
+    order_index INT DEFAULT 0,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS publications (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    title_geo VARCHAR(255) NOT NULL,
+    title_eng VARCHAR(255) NOT NULL,
+    link VARCHAR(500) NOT NULL,
+    order_index INT DEFAULT 0,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );

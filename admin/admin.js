@@ -96,8 +96,10 @@ function showSection(sectionName) {
             'activities': 'Activities Management',
             'about': 'About Information',
             'sections': 'Sections Management',
+            'publications': 'Publications Management',
             'contact': 'Contact Information',
-            'users': 'User Management'
+            'users': 'User Management',
+            'employees': 'Employees Management'
         };
         document.getElementById('page-title').textContent = titles[sectionName] || 'Dashboard';
 
@@ -114,10 +116,14 @@ function showSection(sectionName) {
             loadAboutInfo();
         } else if (sectionName === 'sections') {
             loadSections();
+        } else if (sectionName === 'publications') {
+            loadPublications();
         } else if (sectionName === 'contact') {
             loadContactInfo();
         } else if (sectionName === 'users') {
             loadUsers();
+        } else if (sectionName === 'employees') {
+            loadEmployees();
         }
     }
 }
@@ -175,17 +181,21 @@ document.querySelectorAll('.modal').forEach(modal => {
 // Dashboard Stats
 async function loadDashboardStats() {
     try {
-        const [events, upcoming, activities, sections] = await Promise.all([
+        const [events, upcoming, activities, sections, employees, publications] = await Promise.all([
             apiCall('/events'),
             apiCall('/upcoming-events'),
             apiCall('/activities/all'),
-            apiCall('/sections')
+            apiCall('/sections'),
+            apiCall('/employees'),
+            apiCall('/publications/all')
         ]);
 
         document.getElementById('events-count').textContent = events?.length || 0;
         document.getElementById('upcoming-count').textContent = upcoming?.length || 0;
         document.getElementById('activities-count').textContent = activities?.length || 0;
         document.getElementById('sections-count').textContent = sections?.length || 0;
+        document.getElementById('employees-count').textContent = employees?.length || 0;
+        document.getElementById('publications-count').textContent = publications?.length || 0;
     } catch (err) {
         console.error('Error loading dashboard stats:', err);
     }
@@ -201,7 +211,7 @@ async function loadEvents() {
         if (events && events.length > 0) {
             tbody.innerHTML = events.map(event => `
                 <tr>
-                    <td>${event.image_url ? `<img src="${event.image_url}" alt="Event">` : 'No image'}</td>
+                    <td>${event.image_url ? `<img src="${event.image_url.startsWith('http') || event.image_url.startsWith('/') ? event.image_url : '/' + event.image_url}" alt="Event">` : 'No image'}</td>
                     <td>${event.title_eng || 'N/A'}</td>
                     <td>${event.title_geo || 'N/A'}</td>
                     <td>${formatDate(event.event_date)}</td>
@@ -299,7 +309,7 @@ window.editEvent = async (id) => {
         }
 
         if (event.image_url) {
-            preview.innerHTML = `<img src="${event.image_url}" alt="Preview">`;
+            preview.innerHTML = `<img src="${event.image_url.startsWith('http') || event.image_url.startsWith('/') ? event.image_url : '/' + event.image_url}" alt="Preview">`;
         }
 
         // Load Custom Fields
@@ -361,7 +371,7 @@ async function loadUpcomingEvents() {
         if (events && events.length > 0) {
             tbody.innerHTML = events.map(event => `
                 <tr>
-                    <td>${event.image_url ? `<img src="${event.image_url}" alt="Event">` : 'No image'}</td>
+                    <td>${event.image_url ? `<img src="${event.image_url.startsWith('http') || event.image_url.startsWith('/') ? event.image_url : '/' + event.image_url}" alt="Event">` : 'No image'}</td>
                     <td>${event.title_eng || 'N/A'}</td>
                     <td>${event.title_geo || 'N/A'}</td>
                     <td>${formatDate(event.start_date)}</td>
@@ -462,7 +472,7 @@ window.editUpcoming = async (id) => {
 
         const preview = document.getElementById('upcoming-image-preview');
         if (event.image_url) {
-            preview.innerHTML = `<img src="${event.image_url}" alt="Preview">`;
+            preview.innerHTML = `<img src="${event.image_url.startsWith('http') || event.image_url.startsWith('/') ? event.image_url : '/' + event.image_url}" alt="Preview">`;
         }
 
         openModal('upcoming-modal', 'Edit Upcoming Event');
@@ -523,7 +533,7 @@ async function loadActivities() {
         if (activities && activities.length > 0) {
             tbody.innerHTML = activities.map(activity => `
                 <tr>
-                    <td>${activity.image_url ? `<img src="${activity.image_url}" alt="Activity">` : 'No image'}</td>
+                    <td>${activity.image_url ? `<img src="${activity.image_url.startsWith('http') || activity.image_url.startsWith('/') ? activity.image_url : '/' + activity.image_url}" alt="Activity">` : 'No image'}</td>
                     <td>${activity.title_eng || 'N/A'}</td>
                     <td>${activity.title_geo || 'N/A'}</td>
                     <td>${formatDate(activity.activity_date)}</td>
@@ -617,7 +627,7 @@ window.editActivity = async (id) => {
 
         const preview = document.getElementById('activity-image-preview');
         if (activity.image_url) {
-            preview.innerHTML = `<img src="${activity.image_url}" alt="Preview">`;
+            preview.innerHTML = `<img src="${activity.image_url.startsWith('http') || activity.image_url.startsWith('/') ? activity.image_url : '/' + activity.image_url}" alt="Preview">`;
         }
 
         openModal('activity-modal', 'Edit Activity');
@@ -798,6 +808,118 @@ window.deleteSection = async (id) => {
     }
 };
 
+// Publications Management
+async function loadPublications() {
+    const tbody = document.getElementById('publications-tbody');
+    tbody.innerHTML = '<tr><td colspan="5" class="loading">Loading publications...</td></tr>';
+
+    try {
+        const publications = await apiCall('/publications/all');
+        if (publications && publications.length > 0) {
+            tbody.innerHTML = publications.map(pub => `
+                <tr>
+                    <td>${pub.title_eng || 'N/A'}</td>
+                    <td>${pub.title_geo || 'N/A'}</td>
+                    <td style="max-width: 300px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                        <a href="${pub.link}" target="_blank" rel="noopener noreferrer" title="${pub.link}">${pub.link}</a>
+                    </td>
+                    <td>${pub.order_index || 0}</td>
+                    <td>
+                        <div class="action-buttons">
+                            <button class="btn btn-sm btn-primary" onclick="editPublication(${pub.id})">Edit</button>
+                            <button class="btn btn-sm btn-danger" onclick="deletePublication(${pub.id})">Delete</button>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+        } else {
+            tbody.innerHTML = '<tr><td colspan="5" class="empty-state">No publications found</td></tr>';
+        }
+    } catch (err) {
+        tbody.innerHTML = '<tr><td colspan="5" class="empty-state">Error loading publications</td></tr>';
+        showToast('Error loading publications', 'error');
+    }
+}
+
+document.getElementById('add-publication-btn').addEventListener('click', () => {
+    openModal('publication-modal', 'Add Publication');
+});
+
+document.getElementById('publication-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const publicationId = document.getElementById('publication-id').value;
+    const isEdit = !!publicationId;
+
+    try {
+        const data = {
+            title_geo: document.getElementById('publication-title-geo').value,
+            title_eng: document.getElementById('publication-title-eng').value,
+            link: document.getElementById('publication-link').value,
+            order_index: parseInt(document.getElementById('publication-order').value) || 0
+        };
+
+        if (isEdit) {
+            await apiCall(`/publications/${publicationId}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+            showToast('Publication updated successfully');
+        } else {
+            await apiCall('/publications', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+            showToast('Publication added successfully');
+        }
+        closeModal('publication-modal');
+        loadPublications();
+        loadDashboardStats();
+    } catch (err) {
+        showToast(err.message || 'Error saving publication', 'error');
+    }
+});
+
+window.editPublication = async (id) => {
+    try {
+        const publications = await apiCall('/publications/all');
+        const publication = publications.find(p => p.id === id);
+        if (publication) {
+            document.getElementById('publication-id').value = publication.id;
+            document.getElementById('publication-title-geo').value = publication.title_geo || '';
+            document.getElementById('publication-title-eng').value = publication.title_eng || '';
+            document.getElementById('publication-link').value = publication.link || '';
+            document.getElementById('publication-order').value = publication.order_index || 0;
+            openModal('publication-modal', 'Edit Publication');
+        }
+    } catch (err) {
+        showToast('Error loading publication', 'error');
+    }
+};
+
+window.deletePublication = async (id) => {
+    if (!confirm('Are you sure you want to delete this publication?')) return;
+
+    try {
+        await apiCall(`/publications/${id}`, { method: 'DELETE' });
+        showToast('Publication deleted successfully');
+        loadPublications();
+        loadDashboardStats();
+    } catch (err) {
+        showToast('Error deleting publication', 'error');
+    }
+};
+
+document.getElementById('publications-search').addEventListener('input', (e) => {
+    const searchTerm = e.target.value.toLowerCase();
+    const rows = document.querySelectorAll('#publications-tbody tr');
+    rows.forEach(row => {
+        const text = row.textContent.toLowerCase();
+        row.style.display = text.includes(searchTerm) ? '' : 'none';
+    });
+});
+
 // Contact Info Management
 async function loadContactInfo() {
     try {
@@ -897,6 +1019,128 @@ document.getElementById('user-form').addEventListener('submit', async (e) => {
         loadUsers();
     } catch (err) {
         showToast(err.message || 'Error saving user', 'error');
+    }
+});
+
+// Employees Management
+async function loadEmployees() {
+    const tbody = document.getElementById('employees-tbody');
+    tbody.innerHTML = '<tr><td colspan="5" class="loading">Loading employees...</td></tr>';
+
+    try {
+        const employees = await apiCall('/employees');
+        if (employees && employees.length > 0) {
+            tbody.innerHTML = employees.map(employee => `
+                <tr>
+                    <td>${employee.image_url ? `<img src="${employee.image_url.startsWith('http') || employee.image_url.startsWith('/') ? employee.image_url : '/' + employee.image_url}" alt="Employee">` : 'No image'}</td>
+                    <td>${employee.name_eng || 'N/A'}</td>
+                    <td>${employee.name_geo || 'N/A'}</td>
+                    <td>${employee.order_index || 0}</td>
+                    <td>
+                        <div class="action-buttons">
+                            <button class="btn btn-sm btn-primary" onclick="editEmployee(${employee.id})">Edit</button>
+                            <button class="btn btn-sm btn-danger" onclick="deleteEmployee(${employee.id})">Delete</button>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+        } else {
+            tbody.innerHTML = '<tr><td colspan="5" class="empty-state">No employees found</td></tr>';
+        }
+    } catch (err) {
+        tbody.innerHTML = '<tr><td colspan="5" class="empty-state">Error loading employees</td></tr>';
+        showToast('Error loading employees', 'error');
+    }
+}
+
+document.getElementById('add-employee-btn').addEventListener('click', () => {
+    openModal('employee-modal', 'Add Employee');
+});
+
+document.getElementById('employee-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const formData = new FormData();
+    formData.append('name_geo', document.getElementById('employee-name-geo').value);
+    formData.append('name_eng', document.getElementById('employee-name-eng').value);
+    formData.append('details_geo', document.getElementById('employee-details-geo').value);
+    formData.append('details_eng', document.getElementById('employee-details-eng').value);
+    formData.append('order_index', document.getElementById('employee-order').value);
+
+    const imageFile = document.getElementById('employee-image').files[0];
+    if (imageFile) {
+        formData.append('image', imageFile);
+    }
+
+    const employeeId = document.getElementById('employee-id').value;
+    const isEdit = !!employeeId;
+
+    try {
+        if (isEdit) {
+            await apiCall(`/employees/${employeeId}`, {
+                method: 'PUT',
+                body: formData
+            });
+            showToast('Employee updated successfully');
+        } else {
+            await apiCall('/employees', {
+                method: 'POST',
+                body: formData
+            });
+            showToast('Employee added successfully');
+        }
+        closeModal('employee-modal');
+        loadEmployees();
+        loadDashboardStats();
+    } catch (err) {
+        showToast(err.message || 'Error saving employee', 'error');
+    }
+});
+
+window.editEmployee = async (id) => {
+    try {
+        const employees = await apiCall('/employees');
+        const employee = employees.find(e => e.id === id);
+        if (employee) {
+            document.getElementById('employee-id').value = employee.id;
+            document.getElementById('employee-name-geo').value = employee.name_geo || '';
+            document.getElementById('employee-name-eng').value = employee.name_eng || '';
+            document.getElementById('employee-details-geo').value = employee.details_geo || '';
+            document.getElementById('employee-details-eng').value = employee.details_eng || '';
+            document.getElementById('employee-order').value = employee.order_index || 0;
+
+            const preview = document.getElementById('employee-image-preview');
+            if (employee.image_url) {
+                preview.innerHTML = `<img src="${employee.image_url.startsWith('http') || employee.image_url.startsWith('/') ? employee.image_url : '/' + employee.image_url}" alt="Preview">`;
+            }
+
+            openModal('employee-modal', 'Edit Employee');
+        }
+    } catch (err) {
+        showToast('Error loading employee', 'error');
+    }
+};
+
+window.deleteEmployee = async (id) => {
+    if (!confirm('Are you sure you want to delete this employee?')) return;
+
+    try {
+        await apiCall(`/employees/${id}`, { method: 'DELETE' });
+        showToast('Employee deleted successfully');
+        loadEmployees();
+        loadDashboardStats();
+    } catch (err) {
+        showToast('Error deleting employee', 'error');
+    }
+};
+
+document.getElementById('employee-image').addEventListener('change', (e) => {
+    const file = e.target.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            document.getElementById('employee-image-preview').innerHTML = `<img src="${e.target.result}" alt="Preview">`;
+        };
+        reader.readAsDataURL(file);
     }
 });
 
