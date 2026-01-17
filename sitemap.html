@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Site Map - Georgia Association of Allergology and Clinical Immunology</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/dejavu-sans@1.0.0/css/dejavu-sans.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/dejavu-sans-bold@1.0.0/css/dejavu-sans-bold.min.css">
+    <style>
+        .sitemap-section {
+            padding: 20px;
+        }
+
+        .sitemap-category {
+            margin-bottom: 30px;
+        }
+
+        .sitemap-category h3 {
+            font-size: 1.2rem;
+            color: var(--primary-blue);
+            border-bottom: 2px solid var(--accent-yellow);
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+        }
+
+        .sitemap-list {
+            list-style: none;
+            padding: 0;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 10px;
+        }
+
+        .sitemap-list li {
+            margin-bottom: 8px;
+        }
+
+        .sitemap-list a {
+            text-decoration: none;
+            color: var(--text-primary);
+            transition: color 0.2s;
+        }
+
+        .sitemap-list a:hover {
+            color: var(--primary-blue);
+        }
+    </style>
+</head>
+
+<body class="page-sitemap">
+    <a href="#main-content" class="skip-link" data-i18n="header.skip_link">Skip to main content</a>
+    <div class="container">
+        <!-- Header Section -->
+        <header class="header">
+            <div class="logo-left">
+                <a href="index.html"><img src="images/logo.png" alt="GAACI Logo"></a>
+            </div>
+            <h1 class="organization-title" data-i18n="header.title">Loading...</h1>
+            <nav class="header-nav">
+                <button id="language-toggle" class="language-toggle">ENG</button>
+                <button id="theme-toggle" class="theme-toggle">🎨</button>
+            </nav>
+        </header>
+
+        <!-- Main Content Area -->
+        <main id="main-content" class="main-content">
+
+            <!-- Lower Section with Sidebar -->
+            <section class="lower-section">
+                <!-- Left Sidebar -->
+                <aside class="sidebar">
+                    <nav class="sidebar-nav">
+                        <a href="about.html" class="sidebar-item" data-event-type="about"><span class="brand-text"
+                                data-i18n="sidebar.brand">GAACI</span></a>
+                        <a href="publications.html" class="sidebar-item"><span class="brand-text"
+                                data-i18n="sidebar.brand">GAACI</span>
+                            <span data-i18n="sidebar.publications">Publications</span></a>
+                        <a href="index.html#upcoming-section" class="sidebar-item" data-event-type="upcoming"><span
+                                class="brand-text" data-i18n="sidebar.brand">GAACI</span>
+                            <span data-i18n="sidebar.congresses">Congresses</span></a>
+                        <a href="index.html#archive-section" class="sidebar-item" data-event-type="archive"><span
+                                class="brand-text" data-i18n="sidebar.brand">GAACI</span>
+                            <span data-i18n="sidebar.archive">Archive</span></a>
+                        <a href="index.html#activities-section" class="sidebar-item" data-event-type="activities"><span
+                                class="brand-text" data-i18n="sidebar.brand">GAACI</span>
+                            <span data-i18n="sidebar.activities">Activities</span></a>
+                        <a href="index.html#news-section" class="sidebar-item" data-i18n="sidebar.news">News</a>
+                    </nav>
+                </aside>
+
+                <!-- Sitemap Content -->
+                <div class="content-area" style="width: 100%; padding: 20px; padding-top: 0px;">
+                    <section class="sitemap-section">
+                        <h2 class="section-title" data-i18n="footer.sitemap">Site Map</h2>
+                        <div id="sitemap-container">
+                            <div class="loading-message">Loading...</div>
+                        </div>
+                    </section>
+                </div>
+            </section>
+        </main>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="footer-content">
+                <div class="footer-links">
+                    <a href="index.html#gallery-section" data-i18n="footer.gallery">Gallery</a>
+                    <a href="membership.html" data-i18n="footer.membership">Membership</a>
+                    <a href="publications.html" data-i18n="sidebar.publications">Publications</a>
+                    <a href="contact.html" data-i18n="footer.contact">Contact</a>
+                    <a href="sitemap.html" data-i18n="footer.sitemap">Site Map</a>
+                </div>
+                <div class="footer-logo">
+                    <img src="images/logo.png" alt="GAACI Logo">
+                </div>
+                <div class="footer-copyright" data-i18n="footer.copyright">© 2025 www.gaaci.ge</div>
+            </div>
+        </footer>
+    </div>
+    <script src="script.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            const container = document.getElementById('sitemap-container');
+
+            // Wait for translations to load (from script.js)
+            // A simple way is to poll or just wait a bit, but better is to hook into it. 
+            // script.js doesn't export a promise easily. We'll just fetch data and render, 
+            // relying on script.js to handle the page-level translation initially.
+            // We need to know current language yourself or wait for script.js?
+            // script.js sets 'lang' attribute on html. We can observe that.
+
+            let currentLang = document.documentElement.lang === 'ka' ? 'geo' : 'eng';
+
+            // Function to fetch and render
+            async function loadSitemap() {
+                try {
+                    const res = await fetch('http://localhost:5000/api/sitemap-data');
+                    const data = await res.json();
+
+                    renderSitemap(data);
+                } catch (err) {
+                    console.error('Error loading sitemap:', err);
+                    container.innerHTML = '<p>Error loading site map.</p>';
+                }
+            }
+
+            function renderSitemap(data) {
+                container.innerHTML = '';
+
+                // Static Pages Category
+                const pages = [
+                    { title_eng: 'Home', title_geo: 'მთავარი', link: 'index.html' },
+                    { title_eng: 'About Us', title_geo: 'ჩვენს შესახებ', link: 'about.html' },
+                    { title_eng: 'Contact', title_geo: 'კონტაქტი', link: 'contact.html' },
+                    { title_eng: 'Membership', title_geo: 'წევრობა', link: 'membership.html' },
+                    { title_eng: 'Publications', title_geo: 'პუბლიკაციები', link: 'publications.html' }
+                ];
+                renderCategory('Pages', 'გვერდები', pages, (item) => item.link, (item) => item);
+
+                // Upcoming Events
+                renderCategory('Upcoming Events', 'მომავალი ღონისძიებები', data.upcoming,
+                    (item) => `event-detail.html?id=${item.id}&type=upcoming`,
+                    (item) => item
+                );
+
+                // Events Archive
+                renderCategory('Events Archive', 'ღონისძიებების არქივი', data.events,
+                    (item) => `event-detail.html?id=${item.id}&type=event`,
+                    (item) => item
+                );
+
+                // Activities
+                renderCategory('Activities', 'აქტივობები', data.activities,
+                    (item) => `event-detail.html?id=${item.id}&type=activity`,
+                    (item) => item
+                );
+
+                // Publications
+                renderCategory('Publications', 'პუბლიკაციები', data.publications,
+                    (item) => item.link,
+                    (item) => item,
+                    true // external links
+                );
+            }
+
+            function renderCategory(titleEng, titleGeo, items, linkFn, itemFn, isExternal = false) {
+                if (!items || items.length === 0) return;
+
+                const section = document.createElement('div');
+                section.className = 'sitemap-category';
+
+                const h3 = document.createElement('h3');
+                h3.textContent = currentLang === 'geo' ? titleGeo : titleEng;
+                // Add data-i18n attribute for dynamic language switching if we wanted to make it fully robust,
+                // but re-rendering on mutation is easier for this inline script.
+                section.appendChild(h3);
+
+                const ul = document.createElement('ul');
+                ul.className = 'sitemap-list';
+
+                items.forEach(rawItem => {
+                    const item = itemFn(rawItem);
+                    const li = document.createElement('li');
+                    const a = document.createElement('a');
+                    a.href = linkFn(rawItem);
+                    a.textContent = currentLang === 'geo' ? item.title_geo : item.title_eng;
+                    if (isExternal) {
+                        a.target = '_blank';
+                        a.rel = 'noopener noreferrer';
+                    }
+                    li.appendChild(a);
+                    ul.appendChild(li);
+                });
+
+                section.appendChild(ul);
+                container.appendChild(section);
+            }
+
+            // Initial Load
+            await loadSitemap();
+
+            // Watch for language changes
+            const observer = new MutationObserver((mutations) => {
+                mutations.forEach((mutation) => {
+                    if (mutation.type === 'attributes' && mutation.attributeName === 'lang') {
+                        currentLang = document.documentElement.lang === 'ka' ? 'geo' : 'eng';
+                        loadSitemap(); // Re-render with new language
+                    }
+                });
+            });
+
+            observer.observe(document.documentElement, { attributes: true });
+        });
+    </script>
+</body>
+
+</html>

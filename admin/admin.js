@@ -99,7 +99,8 @@ function showSection(sectionName) {
             'publications': 'Publications Management',
             'contact': 'Contact Information',
             'users': 'User Management',
-            'employees': 'Employees Management'
+            'employees': 'Employees Management',
+            'news': 'News Management'
         };
         document.getElementById('page-title').textContent = titles[sectionName] || 'Dashboard';
 
@@ -124,6 +125,8 @@ function showSection(sectionName) {
             loadUsers();
         } else if (sectionName === 'employees') {
             loadEmployees();
+        } else if (sectionName === 'news') {
+            loadNews();
         }
     }
 }
@@ -181,13 +184,14 @@ document.querySelectorAll('.modal').forEach(modal => {
 // Dashboard Stats
 async function loadDashboardStats() {
     try {
-        const [events, upcoming, activities, sections, employees, publications] = await Promise.all([
+        const [events, upcoming, activities, sections, employees, publications, news] = await Promise.all([
             apiCall('/events'),
             apiCall('/upcoming-events'),
             apiCall('/activities/all'),
             apiCall('/sections'),
             apiCall('/employees'),
-            apiCall('/publications/all')
+            apiCall('/publications/all'),
+            apiCall('/news/all')
         ]);
 
         document.getElementById('events-count').textContent = events?.length || 0;
@@ -196,6 +200,7 @@ async function loadDashboardStats() {
         document.getElementById('sections-count').textContent = sections?.length || 0;
         document.getElementById('employees-count').textContent = employees?.length || 0;
         document.getElementById('publications-count').textContent = publications?.length || 0;
+        document.getElementById('news-count').textContent = news?.length || 0;
     } catch (err) {
         console.error('Error loading dashboard stats:', err);
     }
@@ -794,6 +799,182 @@ window.editSection = async (id) => {
         showToast('Error loading section', 'error');
     }
 };
+
+// --- News Management ---
+// Initialize News Quills
+if (document.getElementById('news-content-geo-container')) {
+    quillInstances['news-geo'] = new Quill('#news-content-geo-container', {
+        theme: 'snow',
+        modules: {
+            toolbar: [
+                ['bold', 'italic', 'underline', 'strike'],
+                ['link', 'image'],
+                [{ 'list': 'ordered' }, { 'list': 'bullet' }],
+                [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
+                [{ 'align': [] }],
+                ['clean']
+            ]
+        }
+    });
+
+    quillInstances['news-eng'] = new Quill('#news-content-eng-container', {
+        theme: 'snow',
+        modules: {
+            toolbar: [
+                ['bold', 'italic', 'underline', 'strike'],
+                ['link', 'image'],
+                [{ 'list': 'ordered' }, { 'list': 'bullet' }],
+                [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
+                [{ 'align': [] }],
+                ['clean']
+            ]
+        }
+    });
+}
+
+async function loadNews() {
+    const tbody = document.getElementById('news-tbody');
+    tbody.innerHTML = '<tr><td colspan="5" class="loading">Loading news...</td></tr>';
+
+    try {
+        const news = await apiCall('/news/all');
+        if (news && news.length > 0) {
+            tbody.innerHTML = news.map(item => `
+                <tr>
+                    <td>${item.image_url ? `<img src="${item.image_url.startsWith('http') || item.image_url.startsWith('/') ? item.image_url : '/' + item.image_url}" alt="News">` : 'No image'}</td>
+                    <td>${item.title_eng || 'N/A'}</td>
+                    <td>${item.title_geo || 'N/A'}</td>
+                    <td>${formatDate(item.created_at)}</td>
+                    <td>
+                        <div class="action-buttons">
+                            <button class="btn btn-sm btn-primary" onclick="editNews(${item.id})">Edit</button>
+                            <button class="btn btn-sm btn-danger" onclick="deleteNews(${item.id})">Delete</button>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+        } else {
+            tbody.innerHTML = '<tr><td colspan="5" class="empty-state">No news found</td></tr>';
+        }
+    } catch (err) {
+        tbody.innerHTML = '<tr><td colspan="5" class="empty-state">Error loading news</td></tr>';
+        showToast('Error loading news', 'error');
+    }
+}
+
+document.getElementById('add-news-btn').addEventListener('click', () => {
+    // Reset Quills
+    if (quillInstances['news-geo']) quillInstances['news-geo'].setText('');
+    if (quillInstances['news-eng']) quillInstances['news-eng'].setText('');
+    openModal('news-modal', 'Add News');
+});
+
+document.getElementById('news-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const formData = new FormData();
+    formData.append('title_geo', document.getElementById('news-title-geo').value);
+    formData.append('title_eng', document.getElementById('news-title-eng').value);
+
+    // Get content from Quill
+    const contentGeo = quillInstances['news-geo'].root.innerHTML;
+    const contentEng = quillInstances['news-eng'].root.innerHTML;
+
+    formData.append('content_geo', contentGeo);
+    formData.append('content_eng', contentEng);
+
+    const imageFile = document.getElementById('news-image').files[0];
+    if (imageFile) {
+        formData.append('image', imageFile);
+    }
+
+    const newsId = document.getElementById('news-id').value;
+    const isEdit = !!newsId;
+
+    try {
+        if (isEdit) {
+            await apiCall(`/news/${newsId}`, {
+                method: 'PUT',
+                body: formData
+            });
+            showToast('News updated successfully');
+        } else {
+            await apiCall('/news', {
+                method: 'POST',
+                body: formData
+            });
+            showToast('News added successfully');
+        }
+        closeModal('news-modal');
+        loadNews();
+        loadDashboardStats();
+    } catch (err) {
+        showToast(err.message || 'Error saving news', 'error');
+    }
+});
+
+window.editNews = async (id) => {
+    try {
+        const newsList = await apiCall('/news/all'); // Or fetch single if endpoint exists
+        const item = newsList.find(n => n.id === id); // Mock fetch single if needed or use /news/:id
+
+        // Better to fetch single to be safe if list isn't full detail, but list has fields
+        // Let's assume list has fields for now or fetch single
+        // const item = await apiCall(`/news/${id}`); // Assuming public endpoint can be used or add admin specific one if needed.
+        // Actually public endpoint /news/:id is public, so admin can use it or the list.
+
+        if (item) {
+            document.getElementById('news-id').value = item.id;
+            document.getElementById('news-title-geo').value = item.title_geo || '';
+            document.getElementById('news-title-eng').value = item.title_eng || '';
+
+            if (quillInstances['news-geo']) quillInstances['news-geo'].root.innerHTML = item.content_geo || '';
+            if (quillInstances['news-eng']) quillInstances['news-eng'].root.innerHTML = item.content_eng || '';
+
+            const preview = document.getElementById('news-image-preview');
+            if (item.image_url) {
+                preview.innerHTML = `<img src="${item.image_url.startsWith('http') || item.image_url.startsWith('/') ? item.image_url : '/' + item.image_url}" alt="Preview">`;
+            }
+
+            openModal('news-modal', 'Edit News');
+        }
+    } catch (err) {
+        showToast('Error loading news item', 'error');
+    }
+};
+
+window.deleteNews = async (id) => {
+    if (!confirm('Are you sure you want to delete this news item?')) return;
+
+    try {
+        await apiCall(`/news/${id}`, { method: 'DELETE' });
+        showToast('News deleted successfully');
+        loadNews();
+        loadDashboardStats();
+    } catch (err) {
+        showToast('Error deleting news', 'error');
+    }
+};
+
+document.getElementById('news-image').addEventListener('change', (e) => {
+    const file = e.target.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            document.getElementById('news-image-preview').innerHTML = `<img src="${e.target.result}" alt="Preview">`;
+        };
+        reader.readAsDataURL(file);
+    }
+});
+
+document.getElementById('news-search').addEventListener('input', (e) => {
+    const searchTerm = e.target.value.toLowerCase();
+    const rows = document.querySelectorAll('#news-tbody tr');
+    rows.forEach(row => {
+        const text = row.textContent.toLowerCase();
+        row.style.display = text.includes(searchTerm) ? '' : 'none';
+    });
+});
+
 
 window.deleteSection = async (id) => {
     if (!confirm('Are you sure you want to delete this section?')) return;

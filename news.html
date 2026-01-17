@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>News - Georgia Association of Allergology and Clinical Immunology</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/dejavu-sans@1.0.0/css/dejavu-sans.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/dejavu-sans-bold@1.0.0/css/dejavu-sans-bold.min.css">
+</head>
+
+<body class="page-news">
+    <a href="#main-content" class="skip-link" data-i18n="header.skip_link">Skip to main content</a>
+    <div class="container">
+        <!-- Header Section -->
+        <header class="header">
+            <div class="logo-left">
+                <a href="index.html"><img src="images/logo.png" alt="GAACI Logo"></a>
+            </div>
+            <h1 class="organization-title" data-i18n="header.title">Loading...</h1>
+            <nav class="header-nav">
+                <button id="language-toggle" class="language-toggle">ENG</button>
+                <button id="theme-toggle" class="theme-toggle">🎨</button>
+            </nav>
+        </header>
+
+        <!-- Main Content Area -->
+        <main id="main-content" class="main-content">
+
+            <!-- Lower Section with Sidebar -->
+            <section class="lower-section">
+                <!-- Left Sidebar -->
+                <aside class="sidebar">
+                    <nav class="sidebar-nav">
+                        <a href="about.html" class="sidebar-item" data-event-type="about"><span class="brand-text"
+                                data-i18n="sidebar.brand">GAACI</span></a>
+                        <a href="publications.html" class="sidebar-item"><span class="brand-text"
+                                data-i18n="sidebar.brand">GAACI</span>
+                            <span data-i18n="sidebar.publications">Publications</span></a>
+                        <a href="index.html#upcoming-section" class="sidebar-item" data-event-type="upcoming"><span
+                                class="brand-text" data-i18n="sidebar.brand">GAACI</span>
+                            <span data-i18n="sidebar.congresses">Congresses</span></a>
+                        <a href="index.html#archive-section" class="sidebar-item" data-event-type="archive"><span
+                                class="brand-text" data-i18n="sidebar.brand">GAACI</span>
+                            <span data-i18n="sidebar.archive">Archive</span></a>
+                        <a href="index.html#activities-section" class="sidebar-item" data-event-type="activities"><span
+                                class="brand-text" data-i18n="sidebar.brand">GAACI</span>
+                            <span data-i18n="sidebar.activities">Activities</span></a>
+                        <a href="news.html" class="sidebar-item active" data-i18n="sidebar.news">News</a>
+                    </nav>
+                </aside>
+
+                <!-- News Content -->
+                <div class="content-area" style="width: 100%; padding: 20px;padding-top: 0px;">
+                    <section class="news-section">
+                        <h2 class="section-title" data-i18n="sidebar.news">News</h2>
+                        <div class="news-grid" id="news-grid"
+                            style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px;">
+                            <!-- News items will be loaded here -->
+                        </div>
+                    </section>
+                </div>
+            </section>
+        </main>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="footer-content">
+                <div class="footer-links">
+                    <a href="index.html#gallery-section" data-i18n="footer.gallery">Gallery</a>
+                    <a href="membership.html" data-i18n="footer.membership">Membership</a>
+                    <a href="publications.html" data-i18n="sidebar.publications">Publications</a>
+                    <a href="contact.html" data-i18n="footer.contact">Contact</a>
+                    <a href="sitemap.html" data-i18n="footer.sitemap">Site Map</a>
+                </div>
+                <div class="footer-logo">
+                    <img src="images/logo.png" alt="GAACI Logo">
+                </div>
+                <div class="footer-copyright" data-i18n="footer.copyright">© 2025 www.gaaci.ge</div>
+            </div>
+        </footer>
+    </div>
+    <script src="script.js"></script>
+    <script>
+        // Separate script logic for news page specialized loading
+        document.addEventListener('DOMContentLoaded', () => {
+            loadNewsPage();
+        });
+
+        async function loadNewsPage() {
+            const grid = document.getElementById('news-grid');
+            grid.innerHTML = '<p>Loading news...</p>';
+            try {
+                const res = await fetch('http://localhost:5000/api/news');
+                const newsItems = await res.json();
+
+                if (newsItems.length === 0) {
+                    grid.innerHTML = '<p>No news found.</p>';
+                    return;
+                }
+
+                grid.innerHTML = '';
+                newsItems.forEach(item => {
+                    const currentLang = document.documentElement.lang === 'ka' ? 'geo' : 'eng';
+                    const title = currentLang === 'geo' ? item.title_geo : item.title_eng;
+                    // Strip HTML tags for preview text
+                    const tempDiv = document.createElement('div');
+                    tempDiv.innerHTML = currentLang === 'geo' ? item.content_geo : item.content_eng;
+                    let previewText = tempDiv.textContent || tempDiv.innerText || '';
+                    previewText = previewText.length > 100 ? previewText.substring(0, 100) + '...' : previewText;
+
+                    const date = new Date(item.created_at).toLocaleDateString();
+
+                    const card = document.createElement('div');
+                    card.className = 'news-card';
+                    card.style.border = '1px solid #eee';
+                    card.style.borderRadius = '8px';
+                    card.style.overflow = 'hidden';
+                    card.style.boxShadow = '0 2px 5px rgba(0,0,0,0.05)';
+                    card.style.transition = 'transform 0.2s';
+                    card.style.cursor = 'pointer';
+
+                    card.onclick = () => window.location.href = `news-detail.html?id=${item.id}`;
+
+                    const imageHtml = item.image_url
+                        ? `<div style="height: 180px; overflow: hidden;"><img src="${item.image_url}" alt="${title}" style="width: 100%; height: 100%; object-fit: cover;"></div>`
+                        : `<div style="height: 180px; background: #f0f0f0; display: flex; align-items: center; justify-content: center; color: #888;">No Image</div>`;
+
+                    card.innerHTML = `
+                        ${imageHtml}
+                        <div style="padding: 15px;">
+                            <div style="font-size: 0.85em; color: #888; margin-bottom: 5px;">${date}</div>
+                            <h3 style="margin: 0 0 10px 0; font-size: 1.1em; color: var(--primary-color, #0056b3);">${title}</h3>
+                            <p style="font-size: 0.9em; color: #666; margin: 0;">${previewText}</p>
+                        </div>
+                    `;
+                    grid.appendChild(card);
+                });
+
+            } catch (err) {
+                console.error('Error loading news:', err);
+                grid.innerHTML = '<p>Error loading news.</p>';
+            }
+        }
+
+        // Listen for language changes to re-render
+        const observer = new MutationObserver((mutations) => {
+            mutations.forEach((mutation) => {
+                if (mutation.type === 'attributes' && mutation.attributeName === 'lang') {
+                    // Update global currentLanguage if script.js hasn't yet (though script.js usually handles it)
+                    // But we need to re-render the list
+                    setTimeout(loadNewsPage, 100);
+                }
+            });
+        });
+        observer.observe(document.documentElement, { attributes: true });
+
+    </script>
+</body>
+
+</html>

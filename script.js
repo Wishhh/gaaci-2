@@ -193,8 +193,15 @@ document.addEventListener('DOMContentLoaded', function () {
             const event = await res.json();
 
             if (event.title_geo) {
-                document.getElementById('upcoming-title').textContent = currentLanguage === 'geo' ? event.title_geo : event.title_eng;
-                document.getElementById('upcoming-details').textContent = currentLanguage === 'geo' ? event.location_geo : event.location_eng;
+                const titleEl = document.getElementById('upcoming-title');
+                const detailsEl = document.getElementById('upcoming-details');
+
+                if (titleEl) {
+                    titleEl.textContent = currentLanguage === 'geo' ? event.title_geo : event.title_eng;
+                }
+                if (detailsEl) {
+                    detailsEl.textContent = currentLanguage === 'geo' ? event.location_geo : event.location_eng;
+                }
 
                 const img = document.getElementById('upcoming-image');
                 if (img && event.image_url) img.src = event.image_url;
@@ -383,14 +390,12 @@ document.addEventListener('DOMContentLoaded', function () {
                     'საკია-ს შესახებ',
                     'კონტაქტი',
                     'წევრობა',
-                    'საკიაში ონლაინ გაწევრიანება'
                 ];
 
                 const itemsEng = [
                     'about GAACI',
                     'Contact',
                     'Membership',
-                    'Join GAACI Online'
                 ];
 
                 const list = document.createElement('div');

@@ -4,14 +4,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Publications - Georgia Association of Allergology and Clinical Immunology</title>
+    <title>News Detail - GAACI</title>
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/dejavu-sans@1.0.0/css/dejavu-sans.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/dejavu-sans-bold@1.0.0/css/dejavu-sans-bold.min.css">
 </head>
 
-<body class="page-publications">
+<body class="page-news-detail">
     <a href="#main-content" class="skip-link" data-i18n="header.skip_link">Skip to main content</a>
     <div class="container">
         <!-- Header Section -->
@@ -48,18 +48,29 @@
                         <a href="index.html#activities-section" class="sidebar-item" data-event-type="activities"><span
                                 class="brand-text" data-i18n="sidebar.brand">GAACI</span>
                             <span data-i18n="sidebar.activities">Activities</span></a>
-                        <a href="index.html#news-section" class="sidebar-item" data-i18n="sidebar.news">News</a>
+                        <a href="news.html" class="sidebar-item" data-i18n="sidebar.news">News</a>
                     </nav>
                 </aside>
 
-                <!-- Publications Content -->
+                <!-- News Detail Content -->
                 <div class="content-area" style="width: 100%; padding: 20px;">
-                    <section class="publications-section" id="publications-section">
-                        <h2 class="section-title" data-i18n="sidebar.publications">Publications</h2>
-                        <div id="publications-container" class="publications-list">
-                            <div class="loading-message">Loading publications...</div>
+                    <a href="news.html" class="back-link"
+                        style="display: inline-block; margin-bottom: 20px; color: var(--primary-color); text-decoration: none;">&larr;
+                        <span data-i18n="detail.back">Back to News</span></a>
+
+                    <article class="news-article" id="news-article">
+                        <h1 id="news-title" class="section-title" style="margin-bottom: 10px;">Loading...</h1>
+                        <p id="news-date" style="color: #666; font-size: 0.9em; margin-bottom: 20px;"></p>
+
+                        <div id="news-image-container" style="margin-bottom: 25px; display: none;">
+                            <img id="news-image" src="" alt="News Image"
+                                style="max-width: 100%; height: auto; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
                         </div>
-                    </section>
+
+                        <div id="news-content" class="rich-text-content" style="line-height: 1.6;">
+                            Loading content...
+                        </div>
+                    </article>
                 </div>
             </section>
         </main>
@@ -82,6 +93,70 @@
         </footer>
     </div>
     <script src="script.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            loadNewsDetail();
+        });
+
+        async function loadNewsDetail() {
+            const params = new URLSearchParams(window.location.search);
+            const id = params.get('id');
+
+            if (!id) {
+                document.getElementById('news-article').innerHTML = '<p>News item not found.</p>';
+                return;
+            }
+
+            try {
+                const res = await fetch(`http://localhost:5000/api/news/${id}`);
+
+                if (!res.ok) {
+                    throw new Error('News not found');
+                }
+
+                const item = await res.json();
+                renderNewsDetail(item);
+
+            } catch (err) {
+                console.error('Error loading news detail:', err);
+                document.getElementById('news-article').innerHTML = '<p>News item not found.</p>';
+            }
+        }
+
+        function renderNewsDetail(item) {
+            const currentLang = document.documentElement.lang === 'ka' ? 'geo' : 'eng';
+            const title = currentLang === 'geo' ? item.title_geo : item.title_eng;
+            const content = currentLang === 'geo' ? item.content_geo : item.content_eng;
+            const date = new Date(item.created_at).toLocaleDateString();
+
+            document.getElementById('news-title').textContent = title;
+            document.getElementById('news-date').textContent = date;
+
+            // Handle Rich Text Content
+            document.getElementById('news-content').innerHTML = content;
+
+            if (item.image_url) {
+                const imgContainer = document.getElementById('news-image-container');
+                const img = document.getElementById('news-image');
+                img.src = item.image_url;
+                img.alt = title;
+                imgContainer.style.display = 'block';
+            }
+        }
+
+        // Listen for language changes to re-render
+        const observer = new MutationObserver((mutations) => {
+            mutations.forEach((mutation) => {
+                if (mutation.type === 'attributes' && mutation.attributeName === 'lang') {
+                    // Reload data (re-fetch is safest to ensure language toggle logic, but we could just re-render if we stored the item)
+                    // Re-fetching is easier for now
+                    loadNewsDetail();
+                }
+            });
+        });
+        observer.observe(document.documentElement, { attributes: true });
+
+    </script>
 </body>
 
 </html>

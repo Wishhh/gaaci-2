@@ -2480,6 +2480,75 @@ select {
     margin: 0;
 }
 
+/* Top Navigation Menu */
+.top-nav-menu {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 12px 15px;
+    margin-bottom: 15px;
+    background: var(--card-bg);
+    border-radius: 6px;
+    transition: background 0.5s ease;
+}
+
+.top-nav-link {
+    color: var(--text-primary);
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    transition: color 0.3s ease;
+    padding: 4px 8px;
+    border-radius: 4px;
+}
+
+.top-nav-link:hover {
+    color: var(--accent-yellow);
+    background: var(--card-secondary);
+}
+
+.top-nav-separator {
+    color: var(--text-secondary);
+    font-size: 14px;
+    user-select: none;
+}
+
+/* Responsive styles for top navigation */
+@media (max-width: 768px) {
+    .top-nav-menu {
+        padding: 10px 12px;
+        margin-bottom: 13px;
+        gap: 6px;
+    }
+
+    .top-nav-link {
+        font-size: 10px;
+        padding: 3px 6px;
+    }
+
+    .top-nav-separator {
+        font-size: 10px;
+    }
+}
+
+@media (max-width: 480px) {
+    .top-nav-menu {
+        padding: 8px 10px;
+        margin-bottom: 10px;
+        gap: 5px;
+    }
+
+    .top-nav-link {
+        font-size: 8px;
+        padding: 2px 4px;
+    }
+
+    .top-nav-separator {
+        font-size: 8px;
+    }
+}
+
 /* Social Media Icons Section */
 .social-media-section {
     display: flex;

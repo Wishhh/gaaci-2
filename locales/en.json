@@ -13,6 +13,9 @@
         "news": "News",
         "next_event": "Next Event"
     },
+    "about": {
+        "structure_title": "Organizational Structure"
+    },
     "general": {
         "sections_title": "Association Sections"
     },
@@ -23,7 +26,8 @@
         "copyright": "© 2025 www.gaaci.ge",
         "phone_label": "Phone:",
         "email_label": "Email:",
-        "address_label": "Address:"
+        "address_label": "Address:",
+        "sitemap": "Site Map"
     },
     "countdown": {
         "day": "Day",
@@ -49,5 +53,10 @@
         "submit": "Send Message",
         "sending": "Sending...",
         "success": "Message sent successfully!"
+    },
+    "topnav": {
+        "resources": "Resources",
+        "contacts": "Contacts",
+        "sitemap": "Site Map"
     }
 }

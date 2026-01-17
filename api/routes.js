@@ -196,6 +196,66 @@ router.get('/upcoming-events/:id', async (req, res) => {
     }
 });
 
+// Get All News (Public)
+router.get('/news', async (req, res) => {
+    try {
+        const [rows] = await db.query('SELECT * FROM news ORDER BY created_at DESC');
+        res.json(rows);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: 'Server error' });
+    }
+});
+
+// Get All News (Admin - placed here to avoid collision with /:id)
+router.get('/news/all', verifyToken, async (req, res) => {
+    try {
+        const [rows] = await db.query('SELECT * FROM news ORDER BY created_at DESC');
+        res.json(rows);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: 'Server error' });
+    }
+});
+
+// Get Single News (Public)
+router.get('/news/:id', async (req, res) => {
+    try {
+        const [rows] = await db.query('SELECT * FROM news WHERE id = ?', [req.params.id]);
+        if (rows.length === 0) {
+            return res.status(404).json({ message: 'News not found' });
+        }
+        res.json(rows[0]);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: 'Server error' });
+    }
+});
+
+// Get Sitemap Data (All content for sitemap.html)
+router.get('/sitemap-data', async (req, res) => {
+    try {
+        const [events] = await db.query('SELECT id, title_geo, title_eng, event_date FROM events ORDER BY event_date DESC');
+        const [upcoming] = await db.query('SELECT id, title_geo, title_eng, start_date FROM upcoming_events ORDER BY start_date ASC');
+        const [activities] = await db.query('SELECT id, title_geo, title_eng, activity_date FROM activities ORDER BY activity_date DESC');
+        const [publications] = await db.query('SELECT title_geo, title_eng, link FROM publications ORDER BY order_index ASC, created_at DESC');
+        const [sections] = await db.query('SELECT title_geo, title_eng FROM sections');
+        const [news] = await db.query('SELECT id, title_geo, title_eng, created_at FROM news ORDER BY created_at DESC');
+
+        res.json({
+            events,
+            upcoming,
+            activities,
+            publications,
+            sections,
+            news
+        });
+    } catch (err) {
+        console.error('Sitemap data error:', err);
+        res.status(500).json({ message: 'Server error' });
+    }
+});
+
 // --- ADMIN ROUTES ---
 
 // Admin Login
@@ -693,7 +753,7 @@ router.get('/publications/all', verifyToken, async (req, res) => {
 // Create Publication
 router.post('/publications', verifyToken, async (req, res) => {
     const { title_geo, title_eng, link, order_index } = req.body;
-    
+
     // Validate required fields
     if (!title_geo || !title_eng || !link) {
         return res.status(400).json({ message: 'Title (both languages) and link are required' });
@@ -721,7 +781,7 @@ router.post('/publications', verifyToken, async (req, res) => {
 // Update Publication
 router.put('/publications/:id', verifyToken, async (req, res) => {
     const { title_geo, title_eng, link, order_index } = req.body;
-    
+
     // Validate required fields
     if (!title_geo || !title_eng || !link) {
         return res.status(400).json({ message: 'Title (both languages) and link are required' });
@@ -740,6 +800,61 @@ router.put('/publications/:id', verifyToken, async (req, res) => {
             [title_geo, title_eng, link, order_index || 0, req.params.id]
         );
         res.json({ message: 'Publication updated successfully' });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: 'Server error' });
+    }
+});
+
+// --- News Admin Routes ---
+
+// [Moved /news/all to public section to avoid collision]
+
+// Create News
+router.post('/news', verifyToken, upload.single('image'), async (req, res) => {
+    const { title_geo, title_eng, content_geo, content_eng } = req.body;
+    const image_url = req.file ? `/uploads/${req.file.filename}` : null;
+
+    try {
+        await db.query(
+            'INSERT INTO news (title_geo, title_eng, content_geo, content_eng, image_url) VALUES (?, ?, ?, ?, ?)',
+            [title_geo, title_eng, content_geo, content_eng, image_url]
+        );
+        res.status(201).json({ message: 'News added successfully' });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: 'Server error' });
+    }
+});
+
+// Update News
+router.put('/news/:id', verifyToken, upload.single('image'), async (req, res) => {
+    const { title_geo, title_eng, content_geo, content_eng } = req.body;
+    try {
+        let updateQuery = 'UPDATE news SET title_geo = ?, title_eng = ?, content_geo = ?, content_eng = ?';
+        let params = [title_geo, title_eng, content_geo, content_eng];
+
+        if (req.file) {
+            updateQuery += ', image_url = ?';
+            params.push(`/uploads/${req.file.filename}`);
+        }
+
+        updateQuery += ' WHERE id = ?';
+        params.push(req.params.id);
+
+        await db.query(updateQuery, params);
+        res.json({ message: 'News updated successfully' });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: 'Server error' });
+    }
+});
+
+// Delete News
+router.delete('/news/:id', verifyToken, async (req, res) => {
+    try {
+        await db.query('DELETE FROM news WHERE id = ?', [req.params.id]);
+        res.json({ message: 'News deleted successfully' });
     } catch (err) {
         console.error(err);
         res.status(500).json({ message: 'Server error' });
