@@ -102,13 +102,13 @@ document.addEventListener('DOMContentLoaded', function () {
         let endpoint = '';
         switch (type) {
             case 'event':
-                endpoint = `http://localhost:5000/api/events/${id}`;
+                endpoint = `/api/events/${id}`;
                 break;
             case 'upcoming':
-                endpoint = `http://localhost:5000/api/upcoming-events/${id}`;
+                endpoint = `/api/upcoming-events/${id}`;
                 break;
             case 'activity':
-                endpoint = `http://localhost:5000/api/activities/${id}`;
+                endpoint = `/api/activities/${id}`;
                 break;
             default:
                 throw new Error('Invalid event type');

@@ -93,7 +93,7 @@
             const grid = document.getElementById('news-grid');
             grid.innerHTML = '<p>Loading news...</p>';
             try {
-                const res = await fetch('http://localhost:5000/api/news');
+                const res = await fetch('/api/news');
                 const newsItems = await res.json();
 
                 if (newsItems.length === 0) {

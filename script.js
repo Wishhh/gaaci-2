@@ -95,7 +95,7 @@ document.addEventListener('DOMContentLoaded', function () {
         if (!container) return;
 
         try {
-            const res = await fetch('http://localhost:5000/api/events');
+            const res = await fetch('/api/events');
             const events = await res.json();
 
             container.innerHTML = '';
@@ -130,7 +130,7 @@ document.addEventListener('DOMContentLoaded', function () {
     // Fetch About Info
     async function fetchAboutInfo() {
         try {
-            const res = await fetch('http://localhost:5000/api/about');
+            const res = await fetch('/api/about');
             const data = await res.json();
 
             const titleEl = document.getElementById('about-title');
@@ -150,7 +150,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const grid = document.getElementById('sections-grid');
         if (!grid) return;
         try {
-            const res = await fetch('http://localhost:5000/api/sections');
+            const res = await fetch('/api/sections');
             const sections = await res.json();
 
             grid.innerHTML = '';
@@ -168,7 +168,7 @@ document.addEventListener('DOMContentLoaded', function () {
     // Fetch Contact Info
     async function fetchContactInfo() {
         try {
-            const res = await fetch('http://localhost:5000/api/contact');
+            const res = await fetch('/api/contact');
             const data = await res.json();
 
             if (data.phone) {
@@ -189,7 +189,7 @@ document.addEventListener('DOMContentLoaded', function () {
     let countdownInterval;
     async function fetchUpcomingEvent() {
         try {
-            const res = await fetch('http://localhost:5000/api/upcoming-event');
+            const res = await fetch('/api/upcoming-event');
             const event = await res.json();
 
             if (event.title_geo) {
@@ -557,7 +557,7 @@ document.addEventListener('DOMContentLoaded', function () {
         if (!eventsContent) return;
 
         try {
-            const res = await fetch('http://localhost:5000/api/events/archive');
+            const res = await fetch('/api/events/archive');
             const events = await res.json();
 
             eventsContent.innerHTML = '';
@@ -602,7 +602,7 @@ document.addEventListener('DOMContentLoaded', function () {
         if (!eventsContent) return;
 
         try {
-            const res = await fetch('http://localhost:5000/api/events/upcoming');
+            const res = await fetch('/api/events/upcoming');
             const events = await res.json();
 
             eventsContent.innerHTML = '';
@@ -654,7 +654,7 @@ document.addEventListener('DOMContentLoaded', function () {
         if (!eventsContent) return;
 
         try {
-            const res = await fetch('http://localhost:5000/api/activities');
+            const res = await fetch('/api/activities');
             const activities = await res.json();
 
             eventsContent.innerHTML = '';
@@ -705,7 +705,7 @@ document.addEventListener('DOMContentLoaded', function () {
         if (!grid) return;
 
         try {
-            const res = await fetch('http://localhost:5000/api/employees');
+            const res = await fetch('/api/employees');
             const employees = await res.json();
 
             grid.innerHTML = '';
@@ -747,7 +747,7 @@ document.addEventListener('DOMContentLoaded', function () {
         if (!container) return;
 
         try {
-            const res = await fetch('http://localhost:5000/api/events/upcoming');
+            const res = await fetch('/api/events/upcoming');
             const events = await res.json();
 
             container.innerHTML = '';
@@ -789,7 +789,7 @@ document.addEventListener('DOMContentLoaded', function () {
         if (!container) return;
 
         try {
-            const res = await fetch('http://localhost:5000/api/publications');
+            const res = await fetch('/api/publications');
             const publications = await res.json();
 
             container.innerHTML = '';
