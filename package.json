@@ -2,7 +2,7 @@
   "name": "gaaci-website",
   "version": "1.0.0",
   "description": "Georgian Association of Allergology and Clinical Immunology (GAACI) - Official Website",
-  "main": "index.html",
+  "main": "server.js",
   "scripts": {
     "start": "node server.js",
     "serve": "npx http-server -p 8000",
