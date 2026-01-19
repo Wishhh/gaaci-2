@@ -1365,6 +1365,7 @@ window.addCustomField = (type, data = null) => {
                 toolbar: [
                     ['bold', 'italic', 'underline', 'strike'],
                     ['blockquote', 'code-block'],
+                    ['image'],
                     [{ 'list': 'ordered' }, { 'list': 'bullet' }],
                     [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
                     [{ 'color': [] }, { 'background': [] }],
@@ -1379,6 +1380,7 @@ window.addCustomField = (type, data = null) => {
                 toolbar: [
                     ['bold', 'italic', 'underline', 'strike'],
                     ['blockquote', 'code-block'],
+                    ['image'],
                     [{ 'list': 'ordered' }, { 'list': 'bullet' }],
                     [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
                     [{ 'color': [] }, { 'background': [] }],

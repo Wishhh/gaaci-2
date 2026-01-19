@@ -2,6 +2,10 @@ document.addEventListener('DOMContentLoaded', function () {
     // --- Localization System ---
     let currentLanguage = 'geo';
     let translations = {};
+    const storedLanguage = localStorage.getItem('gaaci-language');
+    if (storedLanguage === 'geo' || storedLanguage === 'eng') {
+        currentLanguage = storedLanguage;
+    }
 
     async function loadTranslations(lang) {
         try {
@@ -77,6 +81,7 @@ document.addEventListener('DOMContentLoaded', function () {
     if (languageToggle) {
         languageToggle.addEventListener('click', () => {
             currentLanguage = currentLanguage === 'geo' ? 'eng' : 'geo';
+            localStorage.setItem('gaaci-language', currentLanguage);
             loadTranslations(currentLanguage);
         });
     }
