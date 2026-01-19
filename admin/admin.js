@@ -8,7 +8,7 @@ if (!token) {
 }
 
 // Utility Functions
-let quillInstances = {}; // Store quill instances
+let editorInstances = {}; // Store TinyMCE editor instances
 
 function showToast(message, type = 'success') {
     const toast = document.getElementById('toast');
@@ -222,7 +222,7 @@ async function loadEvents() {
                     <td>${formatDate(event.event_date)}</td>
                     <td>
                         <div class="action-buttons">
-                            <button class="btn btn-sm btn-primary" onclick="editEvent(${event.id})">Edit</button>
+                            <a href="event-form.html?id=${event.id}" class="btn btn-sm btn-primary">Edit</a>
                             <button class="btn btn-sm btn-danger" onclick="deleteEvent(${event.id})">Delete</button>
                         </div>
                     </td>
@@ -255,8 +255,8 @@ document.getElementById('event-form').addEventListener('submit', async (e) => {
         const id = item.dataset.id;
         const titleGeo = item.querySelector('.field-title-geo').value;
         const titleEng = item.querySelector('.field-title-eng').value;
-        const contentGeo = quillInstances[`event-${id}-geo`].root.innerHTML;
-        const contentEng = quillInstances[`event-${id}-eng`].root.innerHTML;
+        const contentGeo = editorInstances[`event-${id}-geo`] ? editorInstances[`event-${id}-geo`].getContent() : '';
+        const contentEng = editorInstances[`event-${id}-eng`] ? editorInstances[`event-${id}-eng`].getContent() : '';
 
         if (titleGeo || titleEng) {
             customFields.push({
@@ -319,7 +319,13 @@ window.editEvent = async (id) => {
 
         // Load Custom Fields
         document.getElementById('event-custom-fields-container').innerHTML = '';
-        quillInstances = {};
+        // Remove old TinyMCE instances
+        Object.keys(editorInstances).forEach(key => {
+            if (key.startsWith('event-')) {
+                tinymce.get(key.replace('event-', ''))?.remove();
+                delete editorInstances[key];
+            }
+        });
         if (event.custom_fields) {
             const fields = typeof event.custom_fields === 'string' ? JSON.parse(event.custom_fields) : event.custom_fields;
             fields.forEach(field => addCustomField('event', field));
@@ -383,7 +389,7 @@ async function loadUpcomingEvents() {
                     <td>${formatDate(event.end_date)}</td>
                     <td>
                         <div class="action-buttons">
-                            <button class="btn btn-sm btn-primary" onclick="editUpcoming(${event.id})">Edit</button>
+                            <a href="upcoming-form.html?id=${event.id}" class="btn btn-sm btn-primary">Edit</a>
                             <button class="btn btn-sm btn-danger" onclick="deleteUpcoming(${event.id})">Delete</button>
                         </div>
                     </td>
@@ -419,8 +425,8 @@ document.getElementById('upcoming-form').addEventListener('submit', async (e) =>
         const id = item.dataset.id;
         const titleGeo = item.querySelector('.field-title-geo').value;
         const titleEng = item.querySelector('.field-title-eng').value;
-        const contentGeo = quillInstances[`upcoming-${id}-geo`].root.innerHTML;
-        const contentEng = quillInstances[`upcoming-${id}-eng`].root.innerHTML;
+        const contentGeo = editorInstances[`upcoming-${id}-geo`] ? editorInstances[`upcoming-${id}-geo`].getContent() : '';
+        const contentEng = editorInstances[`upcoming-${id}-eng`] ? editorInstances[`upcoming-${id}-eng`].getContent() : '';
 
         if (titleGeo || titleEng) {
             customFields.push({
@@ -484,7 +490,13 @@ window.editUpcoming = async (id) => {
 
         // Load Custom Fields
         document.getElementById('upcoming-custom-fields-container').innerHTML = '';
-        quillInstances = {};
+        // Remove old TinyMCE instances
+        Object.keys(editorInstances).forEach(key => {
+            if (key.startsWith('upcoming-')) {
+                tinymce.get(key.replace('upcoming-', ''))?.remove();
+                delete editorInstances[key];
+            }
+        });
         if (event.custom_fields) {
             const fields = typeof event.custom_fields === 'string' ? JSON.parse(event.custom_fields) : event.custom_fields;
             fields.forEach(field => addCustomField('upcoming', field));
@@ -544,7 +556,7 @@ async function loadActivities() {
                     <td>${formatDate(activity.activity_date)}</td>
                     <td>
                         <div class="action-buttons">
-                            <button class="btn btn-sm btn-primary" onclick="editActivity(${activity.id})">Edit</button>
+                            <a href="activity-form.html?id=${activity.id}" class="btn btn-sm btn-primary">Edit</a>
                             <button class="btn btn-sm btn-danger" onclick="deleteActivity(${activity.id})">Delete</button>
                         </div>
                     </td>
@@ -577,8 +589,8 @@ document.getElementById('activity-form').addEventListener('submit', async (e) =>
         const id = item.dataset.id;
         const titleGeo = item.querySelector('.field-title-geo').value;
         const titleEng = item.querySelector('.field-title-eng').value;
-        const contentGeo = quillInstances[`activity-${id}-geo`].root.innerHTML;
-        const contentEng = quillInstances[`activity-${id}-eng`].root.innerHTML;
+        const contentGeo = editorInstances[`activity-${id}-geo`] ? editorInstances[`activity-${id}-geo`].getContent() : '';
+        const contentEng = editorInstances[`activity-${id}-eng`] ? editorInstances[`activity-${id}-eng`].getContent() : '';
 
         if (titleGeo || titleEng) {
             customFields.push({
@@ -639,7 +651,13 @@ window.editActivity = async (id) => {
 
         // Load Custom Fields
         document.getElementById('activity-custom-fields-container').innerHTML = '';
-        quillInstances = {};
+        // Remove old TinyMCE instances
+        Object.keys(editorInstances).forEach(key => {
+            if (key.startsWith('activity-')) {
+                tinymce.get(key.replace('activity-', ''))?.remove();
+                delete editorInstances[key];
+            }
+        });
         if (activity.custom_fields) {
             const fields = typeof activity.custom_fields === 'string' ? JSON.parse(activity.custom_fields) : activity.custom_fields;
             fields.forEach(field => addCustomField('activity', field));
@@ -801,33 +819,29 @@ window.editSection = async (id) => {
 };
 
 // --- News Management ---
-// Initialize News Quills
+// Initialize News TinyMCE Editors
 if (document.getElementById('news-content-geo-container')) {
-    quillInstances['news-geo'] = new Quill('#news-content-geo-container', {
-        theme: 'snow',
-        modules: {
-            toolbar: [
-                ['bold', 'italic', 'underline', 'strike'],
-                ['link', 'image'],
-                [{ 'list': 'ordered' }, { 'list': 'bullet' }],
-                [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
-                [{ 'align': [] }],
-                ['clean']
-            ]
+    tinymce.init({
+        selector: '#news-content-geo-container',
+        plugins: 'anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount',
+        toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table | align lineheight | numlist bullist indent outdent | emoticons charmap | removeformat',
+        height: 300,
+        setup: function(editor) {
+            editor.on('init', function() {
+                editorInstances['news-geo'] = editor;
+            });
         }
     });
 
-    quillInstances['news-eng'] = new Quill('#news-content-eng-container', {
-        theme: 'snow',
-        modules: {
-            toolbar: [
-                ['bold', 'italic', 'underline', 'strike'],
-                ['link', 'image'],
-                [{ 'list': 'ordered' }, { 'list': 'bullet' }],
-                [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
-                [{ 'align': [] }],
-                ['clean']
-            ]
+    tinymce.init({
+        selector: '#news-content-eng-container',
+        plugins: 'anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount',
+        toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table | align lineheight | numlist bullist indent outdent | emoticons charmap | removeformat',
+        height: 300,
+        setup: function(editor) {
+            editor.on('init', function() {
+                editorInstances['news-eng'] = editor;
+            });
         }
     });
 }
@@ -847,7 +861,7 @@ async function loadNews() {
                     <td>${formatDate(item.created_at)}</td>
                     <td>
                         <div class="action-buttons">
-                            <button class="btn btn-sm btn-primary" onclick="editNews(${item.id})">Edit</button>
+                            <a href="news-form.html?id=${item.id}" class="btn btn-sm btn-primary">Edit</a>
                             <button class="btn btn-sm btn-danger" onclick="deleteNews(${item.id})">Delete</button>
                         </div>
                     </td>
@@ -863,9 +877,9 @@ async function loadNews() {
 }
 
 document.getElementById('add-news-btn').addEventListener('click', () => {
-    // Reset Quills
-    if (quillInstances['news-geo']) quillInstances['news-geo'].setText('');
-    if (quillInstances['news-eng']) quillInstances['news-eng'].setText('');
+    // Reset TinyMCE editors
+    if (editorInstances['news-geo']) editorInstances['news-geo'].setContent('');
+    if (editorInstances['news-eng']) editorInstances['news-eng'].setContent('');
     openModal('news-modal', 'Add News');
 });
 
@@ -875,9 +889,9 @@ document.getElementById('news-form').addEventListener('submit', async (e) => {
     formData.append('title_geo', document.getElementById('news-title-geo').value);
     formData.append('title_eng', document.getElementById('news-title-eng').value);
 
-    // Get content from Quill
-    const contentGeo = quillInstances['news-geo'].root.innerHTML;
-    const contentEng = quillInstances['news-eng'].root.innerHTML;
+    // Get content from TinyMCE
+    const contentGeo = editorInstances['news-geo'].getContent();
+    const contentEng = editorInstances['news-eng'].getContent();
 
     formData.append('content_geo', contentGeo);
     formData.append('content_eng', contentEng);
@@ -927,8 +941,8 @@ window.editNews = async (id) => {
             document.getElementById('news-title-geo').value = item.title_geo || '';
             document.getElementById('news-title-eng').value = item.title_eng || '';
 
-            if (quillInstances['news-geo']) quillInstances['news-geo'].root.innerHTML = item.content_geo || '';
-            if (quillInstances['news-eng']) quillInstances['news-eng'].root.innerHTML = item.content_eng || '';
+            if (editorInstances['news-geo']) editorInstances['news-geo'].setContent(item.content_geo || '');
+            if (editorInstances['news-eng']) editorInstances['news-eng'].setContent(item.content_eng || '');
 
             const preview = document.getElementById('news-image-preview');
             if (item.image_url) {
@@ -1346,60 +1360,69 @@ window.addCustomField = (type, data = null) => {
             </div>
             <div class="form-group">
                 <label>Content (Georgian)</label>
-                <div id="${type}-${id}-geo" class="quill-editor-container"></div>
+                <textarea id="${type}-${id}-geo" class="tinymce-editor"></textarea>
             </div>
             <div class="form-group">
                 <label>Content (English)</label>
-                <div id="${type}-${id}-eng" class="quill-editor-container"></div>
+                <textarea id="${type}-${id}-eng" class="tinymce-editor"></textarea>
             </div>
         </div>
     `;
 
     container.insertAdjacentHTML('beforeend', fieldHtml);
 
-    // Initialize Quill
+    // Initialize TinyMCE
     setTimeout(() => {
-        const quillGeo = new Quill(`#${type}-${id}-geo`, {
-            theme: 'snow',
-            modules: {
-                toolbar: [
-                    ['bold', 'italic', 'underline', 'strike'],
-                    ['blockquote', 'code-block'],
-                    ['image'],
-                    [{ 'list': 'ordered' }, { 'list': 'bullet' }],
-                    [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
-                    [{ 'color': [] }, { 'background': [] }],
-                    ['clean']
-                ]
+        tinymce.init({
+            selector: `#${type}-${id}-geo`,
+            plugins: 'anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount',
+            toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table | align lineheight | numlist bullist indent outdent | emoticons charmap | removeformat',
+            height: 300,
+            setup: function(editor) {
+                editor.on('init', function() {
+                    if (data && data.content_geo) {
+                        editor.setContent(data.content_geo);
+                    }
+                    editorInstances[`${type}-${id}-geo`] = editor;
+                });
             }
         });
 
-        const quillEng = new Quill(`#${type}-${id}-eng`, {
-            theme: 'snow',
-            modules: {
-                toolbar: [
-                    ['bold', 'italic', 'underline', 'strike'],
-                    ['blockquote', 'code-block'],
-                    ['image'],
-                    [{ 'list': 'ordered' }, { 'list': 'bullet' }],
-                    [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
-                    [{ 'color': [] }, { 'background': [] }],
-                    ['clean']
-                ]
+        tinymce.init({
+            selector: `#${type}-${id}-eng`,
+            plugins: 'anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount',
+            toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table | align lineheight | numlist bullist indent outdent | emoticons charmap | removeformat',
+            height: 300,
+            setup: function(editor) {
+                editor.on('init', function() {
+                    if (data && data.content_eng) {
+                        editor.setContent(data.content_eng);
+                    }
+                    editorInstances[`${type}-${id}-eng`] = editor;
+                });
             }
         });
-
-        if (data && data.content_geo) quillGeo.root.innerHTML = data.content_geo;
-        if (data && data.content_eng) quillEng.root.innerHTML = data.content_eng;
-
-        quillInstances[`${type}-${id}-geo`] = quillGeo;
-        quillInstances[`${type}-${id}-eng`] = quillEng;
     }, 0);
 };
 
 window.removeCustomField = (btn) => {
     if (confirm('Are you sure you want to remove this field?')) {
         const item = btn.closest('.custom-field-item');
+        const id = item.dataset.id;
+        
+        // Remove TinyMCE instances for this field
+        const geoId = item.querySelector('.tinymce-editor')?.id;
+        const engId = item.querySelectorAll('.tinymce-editor')[1]?.id;
+        
+        if (geoId && tinymce.get(geoId)) {
+            tinymce.get(geoId).remove();
+            delete editorInstances[geoId];
+        }
+        if (engId && tinymce.get(engId)) {
+            tinymce.get(engId).remove();
+            delete editorInstances[engId];
+        }
+        
         item.remove();
     }
 };

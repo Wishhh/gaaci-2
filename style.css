@@ -1589,7 +1589,7 @@ select {
 
 .event-detail-description {
     font-size: 20px;
-    line-height: 1.8;
+    line-height: 1;
     color: var(--text-primary);
     white-space: pre-wrap;
     transition: color 0.5s ease;

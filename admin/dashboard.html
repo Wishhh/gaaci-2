@@ -7,7 +7,7 @@
     <title>Admin Dashboard - GAACI</title>
     <link rel="stylesheet" href="admin.css">
     <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
-    <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+    <script src="https://cdn.tiny.cloud/1/76us7g6hvx8cttg26xaizbflq50nggt096utekd8udkeezk6/tinymce/8/tinymce.min.js" referrerpolicy="origin" crossorigin="anonymous"></script>
     <style>
         .custom-field-item {
             border: 1px solid #ddd;
@@ -33,14 +33,9 @@
             cursor: pointer;
         }
 
-        .quill-editor-container {
+        .tinymce-editor-container {
             background: white;
-            height: 200px;
             margin-bottom: 15px;
-        }
-
-        .ql-container {
-            font-family: inherit;
         }
     </style>
 </head>
@@ -171,7 +166,7 @@
         <section id="news-section" class="content-section">
             <div class="section-header">
                 <h2>News Management</h2>
-                <button class="btn btn-primary" id="add-news-btn">+ Add News</button>
+                <a href="news-form.html" class="btn btn-primary">+ Add News</a>
             </div>
             <div class="table-container">
                 <div class="table-controls">
@@ -200,7 +195,7 @@
         <section id="events-section" class="content-section">
             <div class="section-header">
                 <h2>Events Management</h2>
-                <button class="btn btn-primary" id="add-event-btn">+ Add Event</button>
+                <a href="event-form.html" class="btn btn-primary">+ Add Event</a>
             </div>
             <div class="table-container">
                 <div class="table-controls">
@@ -229,7 +224,7 @@
         <section id="upcoming-section" class="content-section">
             <div class="section-header">
                 <h2>Upcoming Events Management</h2>
-                <button class="btn btn-primary" id="add-upcoming-btn">+ Add Upcoming Event</button>
+                <a href="upcoming-form.html" class="btn btn-primary">+ Add Upcoming Event</a>
             </div>
             <div class="table-container">
                 <div class="table-controls">
@@ -260,7 +255,7 @@
         <section id="activities-section" class="content-section">
             <div class="section-header">
                 <h2>Activities Management</h2>
-                <button class="btn btn-primary" id="add-activity-btn">+ Add Activity</button>
+                <a href="activity-form.html" class="btn btn-primary">+ Add Activity</a>
             </div>
             <div class="table-container">
                 <div class="table-controls">
@@ -471,12 +466,12 @@
 
                 <div class="form-group">
                     <label>Content (Georgian) *</label>
-                    <div class="quill-editor-container" id="news-content-geo-container"></div>
+                    <textarea id="news-content-geo-container"></textarea>
                 </div>
 
                 <div class="form-group">
                     <label>Content (English) *</label>
-                    <div class="quill-editor-container" id="news-content-eng-container"></div>
+                    <textarea id="news-content-eng-container"></textarea>
                 </div>
 
                 <div class="form-group">
@@ -765,7 +760,6 @@
 
     <div id="toast" class="toast"></div>
 
-    <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
     <script src="admin.js"></script>
 </body>
 
