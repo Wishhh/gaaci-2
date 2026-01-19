@@ -15,7 +15,13 @@ const storage = multer.diskStorage({
         cb(null, Date.now() + path.extname(file.originalname));
     }
 });
-const upload = multer({ storage: storage });
+const upload = multer({
+    storage: storage,
+    limits: {
+        // Allow larger text fields for base64-embedded images in custom fields
+        fieldSize: 25 * 1024 * 1024
+    }
+});
 
 // Middleware to verify JWT
 const verifyToken = (req, res, next) => {

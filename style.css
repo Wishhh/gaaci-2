@@ -1494,7 +1494,7 @@ select {
 /* Event Detail Page Styles */
 .back-button-container {
     margin-bottom: 30px;
-    padding: 0 30px;
+    /* padding: 0 30px; */
 }
 
 .back-button {
@@ -1517,7 +1517,7 @@ select {
 }
 
 .event-detail-section {
-    padding: 0 30px;
+    /* padding: 0 30px; */
     margin-bottom: 40px;
 }
 
