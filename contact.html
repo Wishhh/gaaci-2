@@ -36,7 +36,7 @@
             <!-- Lower Section with Sidebar -->
             <section class="lower-section">
                 <!-- Left Sidebar -->
-                <aside class="sidebar">
+                <aside class="sidebar contact-page-sidebar">
                     <nav class="sidebar-nav">
                         <a href="about.html" class="sidebar-item" data-event-type="about"><span class="brand-text"
                                 data-i18n="sidebar.brand">GAACI</span></a>
@@ -54,7 +54,46 @@
                             <span data-i18n="sidebar.activities">Activities</span></a>
                         <a href="index.html#news-section" class="sidebar-item" data-i18n="sidebar.news">News</a>
                     </nav>
-                    </nav>
+
+                    <!-- Contact Form (moved here for mobile layout) -->
+                    <div class="contact-form-col sidebar-contact-form">
+                        <h3 style="margin-bottom: 20px; color: var(--primary-blue);"
+                            data-i18n="contact.send_message">Send us a message</h3>
+                        <form id="contact-form-page" class="modern-form">
+                            <div class="form-group" style="margin-bottom: 15px;">
+                                <label for="contact-name"
+                                    style="display: block; margin-bottom: 5px; color: var(--text-primary);"
+                                    data-i18n="contact.name">Name</label>
+                                <input type="text" id="contact-name" required
+                                    style="width: 100%; padding: 10px; border: 1px solid var(--border-color); border-radius: 4px;">
+                            </div>
+                            <div class="form-group" style="margin-bottom: 15px;">
+                                <label for="contact-email-input"
+                                    style="display: block; margin-bottom: 5px; color: var(--text-primary);"
+                                    data-i18n="contact.email">Email</label>
+                                <input type="email" id="contact-email-input" required
+                                    style="width: 100%; padding: 10px; border: 1px solid var(--border-color); border-radius: 4px;">
+                            </div>
+                            <div class="form-group" style="margin-bottom: 15px;">
+                                <label for="contact-subject"
+                                    style="display: block; margin-bottom: 5px; color: var(--text-primary);"
+                                    data-i18n="contact.subject">Subject</label>
+                                <input type="text" id="contact-subject" required
+                                    style="width: 100%; padding: 10px; border: 1px solid var(--border-color); border-radius: 4px;">
+                            </div>
+                            <div class="form-group" style="margin-bottom: 15px;">
+                                <label for="contact-message"
+                                    style="display: block; margin-bottom: 5px; color: var(--text-primary);"
+                                    data-i18n="contact.message">Message</label>
+                                <textarea id="contact-message" rows="5" required
+                                    style="width: 100%; padding: 10px; border: 1px solid var(--border-color); border-radius: 4px; resize: vertical;"></textarea>
+                            </div>
+                            <button type="submit"
+                                style="background-color: var(--primary-blue); color: white; border: none; padding: 12px 24px; border-radius: 4px; cursor: pointer; font-size: 16px; transition: background 0.3s;"
+                                data-i18n="contact.submit">Send Message</button>
+                        </form>
+                        <div id="form-message" style="margin-top: 15px; display: none;"></div>
+                    </div>
                 </aside>
 
                 <!-- Contact Content -->
@@ -82,44 +121,44 @@
                                 </div>
                             </div>
 
-                            <!-- Right Column: Form -->
-                            <div class="contact-form-col">
+                            <!-- Right Column: Form (Desktop only) -->
+                            <div class="contact-form-col desktop-contact-form">
                                 <h3 style="margin-bottom: 20px; color: var(--primary-blue);"
                                     data-i18n="contact.send_message">Send us a message</h3>
-                                <form id="contact-form-page" class="modern-form">
+                                <form id="contact-form-page-desktop" class="modern-form">
                                     <div class="form-group" style="margin-bottom: 15px;">
-                                        <label for="contact-name"
+                                        <label for="contact-name-desktop"
                                             style="display: block; margin-bottom: 5px; color: var(--text-primary);"
                                             data-i18n="contact.name">Name</label>
-                                        <input type="text" id="contact-name" required
+                                        <input type="text" id="contact-name-desktop" required
                                             style="width: 100%; padding: 10px; border: 1px solid var(--border-color); border-radius: 4px;">
                                     </div>
                                     <div class="form-group" style="margin-bottom: 15px;">
-                                        <label for="contact-email-input"
+                                        <label for="contact-email-input-desktop"
                                             style="display: block; margin-bottom: 5px; color: var(--text-primary);"
                                             data-i18n="contact.email">Email</label>
-                                        <input type="email" id="contact-email-input" required
+                                        <input type="email" id="contact-email-input-desktop" required
                                             style="width: 100%; padding: 10px; border: 1px solid var(--border-color); border-radius: 4px;">
                                     </div>
                                     <div class="form-group" style="margin-bottom: 15px;">
-                                        <label for="contact-subject"
+                                        <label for="contact-subject-desktop"
                                             style="display: block; margin-bottom: 5px; color: var(--text-primary);"
                                             data-i18n="contact.subject">Subject</label>
-                                        <input type="text" id="contact-subject" required
+                                        <input type="text" id="contact-subject-desktop" required
                                             style="width: 100%; padding: 10px; border: 1px solid var(--border-color); border-radius: 4px;">
                                     </div>
                                     <div class="form-group" style="margin-bottom: 15px;">
-                                        <label for="contact-message"
+                                        <label for="contact-message-desktop"
                                             style="display: block; margin-bottom: 5px; color: var(--text-primary);"
                                             data-i18n="contact.message">Message</label>
-                                        <textarea id="contact-message" rows="5" required
+                                        <textarea id="contact-message-desktop" rows="5" required
                                             style="width: 100%; padding: 10px; border: 1px solid var(--border-color); border-radius: 4px; resize: vertical;"></textarea>
                                     </div>
                                     <button type="submit"
                                         style="background-color: var(--primary-blue); color: white; border: none; padding: 12px 24px; border-radius: 4px; cursor: pointer; font-size: 16px; transition: background 0.3s;"
                                         data-i18n="contact.submit">Send Message</button>
                                 </form>
-                                <div id="form-message" style="margin-top: 15px; display: none;"></div>
+                                <div id="form-message-desktop" style="margin-top: 15px; display: none;"></div>
                             </div>
                         </div>
 
@@ -135,11 +174,10 @@
         <footer class="footer">
             <div class="footer-content">
                 <div class="footer-links">
-                    <a href="index.html#gallery-section" data-i18n="footer.gallery">Gallery</a>
-                    <a href="membership.html" data-i18n="footer.membership">Membership</a>
-                    <a href="publications.html" data-i18n="sidebar.publications">Publications</a>
+                    <a href="index.html" data-i18n="footer.main">Main</a>
+                    <a href="about.html" data-i18n="footer.about">About</a>
                     <a href="contact.html" data-i18n="footer.contact">Contact</a>
-                    <a href="sitemap.html" data-i18n="footer.sitemap">Site Map</a>
+                    <a href="sitemap.html" data-i18n="footer.sitemap">Sitemap</a>
                 </div>
                 <div class="footer-logo">
                     <img src="images/logo.png" alt="GAACI Logo">

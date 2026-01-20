@@ -53,21 +53,20 @@
                 </aside>
 
                 <!-- News Detail Content -->
-                <div class="content-area" style="width: 100%; padding: 20px;">
-                    <a href="news.html" class="back-link"
-                        style="display: inline-block; margin-bottom: 20px; color: var(--primary-color); text-decoration: none;">&larr;
-                        <span data-i18n="detail.back">Back to News</span></a>
+                <div class="content-area news-detail-wrapper">
+                    <a href="news.html" class="back-link">
+                        <span data-i18n="detail.back">← Back to News</span>
+                    </a>
 
                     <article class="news-article" id="news-article">
-                        <h1 id="news-title" class="section-title" style="margin-bottom: 10px;">Loading...</h1>
-                        <p id="news-date" style="color: #666; font-size: 0.9em; margin-bottom: 20px;"></p>
+                        <h1 id="news-title" class="news-detail-title">Loading...</h1>
+                        <div id="news-date" class="news-detail-date"></div>
 
-                        <div id="news-image-container" style="margin-bottom: 25px; display: none;">
-                            <img id="news-image" src="" alt="News Image"
-                                style="max-width: 100%; height: auto; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
+                        <div id="news-image-container" class="news-detail-image-container" style="display: none;">
+                            <img id="news-image" src="" alt="News Image">
                         </div>
 
-                        <div id="news-content" class="rich-text-content" style="line-height: 1.6;">
+                        <div id="news-content" class="news-detail-content">
                             Loading content...
                         </div>
                     </article>
@@ -79,11 +78,10 @@
         <footer class="footer">
             <div class="footer-content">
                 <div class="footer-links">
-                    <a href="index.html#gallery-section" data-i18n="footer.gallery">Gallery</a>
-                    <a href="membership.html" data-i18n="footer.membership">Membership</a>
-                    <a href="publications.html" data-i18n="sidebar.publications">Publications</a>
+                    <a href="index.html" data-i18n="footer.main">Main</a>
+                    <a href="about.html" data-i18n="footer.about">About</a>
                     <a href="contact.html" data-i18n="footer.contact">Contact</a>
-                    <a href="sitemap.html" data-i18n="footer.sitemap">Site Map</a>
+                    <a href="sitemap.html" data-i18n="footer.sitemap">Sitemap</a>
                 </div>
                 <div class="footer-logo">
                     <img src="images/logo.png" alt="GAACI Logo">
@@ -141,7 +139,12 @@
                 img.src = item.image_url;
                 img.alt = title;
                 imgContainer.style.display = 'block';
+            } else {
+                document.getElementById('news-image-container').style.display = 'none';
             }
+
+            // Update page title
+            document.title = `${title} - GAACI`;
         }
 
         // Listen for language changes to re-render

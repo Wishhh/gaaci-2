@@ -53,11 +53,10 @@
                 </aside>
 
                 <!-- News Content -->
-                <div class="content-area" style="width: 100%; padding: 20px;padding-top: 0px;">
+                <div class="content-area news-detail-wrapper">
                     <section class="news-section">
                         <h2 class="section-title" data-i18n="sidebar.news">News</h2>
-                        <div class="news-grid" id="news-grid"
-                            style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px;">
+                        <div class="news-grid" id="news-grid">
                             <!-- News items will be loaded here -->
                         </div>
                     </section>
@@ -69,11 +68,10 @@
         <footer class="footer">
             <div class="footer-content">
                 <div class="footer-links">
-                    <a href="index.html#gallery-section" data-i18n="footer.gallery">Gallery</a>
-                    <a href="membership.html" data-i18n="footer.membership">Membership</a>
-                    <a href="publications.html" data-i18n="sidebar.publications">Publications</a>
+                    <a href="index.html" data-i18n="footer.main">Main</a>
+                    <a href="about.html" data-i18n="footer.about">About</a>
                     <a href="contact.html" data-i18n="footer.contact">Contact</a>
-                    <a href="sitemap.html" data-i18n="footer.sitemap">Site Map</a>
+                    <a href="sitemap.html" data-i18n="footer.sitemap">Sitemap</a>
                 </div>
                 <div class="footer-logo">
                     <img src="images/logo.png" alt="GAACI Logo">
@@ -91,13 +89,13 @@
 
         async function loadNewsPage() {
             const grid = document.getElementById('news-grid');
-            grid.innerHTML = '<p>Loading news...</p>';
+            grid.innerHTML = '<p style="text-align: center; padding: 40px; color: var(--text-secondary);">Loading news...</p>';
             try {
                 const res = await fetch('/api/news');
                 const newsItems = await res.json();
 
                 if (newsItems.length === 0) {
-                    grid.innerHTML = '<p>No news found.</p>';
+                    grid.innerHTML = '<p style="text-align: center; padding: 40px; color: var(--text-secondary);">No news found.</p>';
                     return;
                 }
 
@@ -109,31 +107,24 @@
                     const tempDiv = document.createElement('div');
                     tempDiv.innerHTML = currentLang === 'geo' ? item.content_geo : item.content_eng;
                     let previewText = tempDiv.textContent || tempDiv.innerText || '';
-                    previewText = previewText.length > 100 ? previewText.substring(0, 100) + '...' : previewText;
+                    previewText = previewText.length > 150 ? previewText.substring(0, 150) + '...' : previewText;
 
                     const date = new Date(item.created_at).toLocaleDateString();
 
                     const card = document.createElement('div');
                     card.className = 'news-card';
-                    card.style.border = '1px solid #eee';
-                    card.style.borderRadius = '8px';
-                    card.style.overflow = 'hidden';
-                    card.style.boxShadow = '0 2px 5px rgba(0,0,0,0.05)';
-                    card.style.transition = 'transform 0.2s';
-                    card.style.cursor = 'pointer';
-
                     card.onclick = () => window.location.href = `news-detail.html?id=${item.id}`;
 
                     const imageHtml = item.image_url
-                        ? `<div style="height: 180px; overflow: hidden;"><img src="${item.image_url}" alt="${title}" style="width: 100%; height: 100%; object-fit: cover;"></div>`
-                        : `<div style="height: 180px; background: #f0f0f0; display: flex; align-items: center; justify-content: center; color: #888;">No Image</div>`;
+                        ? `<div class="news-card-image"><img src="${item.image_url}" alt="${title}"></div>`
+                        : `<div class="news-card-image no-image">No Image</div>`;
 
                     card.innerHTML = `
                         ${imageHtml}
-                        <div style="padding: 15px;">
-                            <div style="font-size: 0.85em; color: #888; margin-bottom: 5px;">${date}</div>
-                            <h3 style="margin: 0 0 10px 0; font-size: 1.1em; color: var(--primary-color, #0056b3);">${title}</h3>
-                            <p style="font-size: 0.9em; color: #666; margin: 0;">${previewText}</p>
+                        <div class="news-card-content">
+                            <div class="news-card-date">${date}</div>
+                            <h3 class="news-card-title">${title}</h3>
+                            <p class="news-card-preview">${previewText}</p>
                         </div>
                     `;
                     grid.appendChild(card);
@@ -141,7 +132,7 @@
 
             } catch (err) {
                 console.error('Error loading news:', err);
-                grid.innerHTML = '<p>Error loading news.</p>';
+                grid.innerHTML = '<p style="text-align: center; padding: 40px; color: var(--accent-yellow);">Error loading news.</p>';
             }
         }
 
