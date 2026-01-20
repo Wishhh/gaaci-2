@@ -1541,6 +1541,8 @@ select {
     border-radius: 8px;
     overflow: hidden;
     transition: background 0.5s ease;
+    max-width: 100%;
+    box-sizing: border-box;
 }
 
 .event-detail-image {
@@ -1558,6 +1560,10 @@ select {
 
 .event-detail-content {
     padding: 40px;
+    max-width: 100%;
+    box-sizing: border-box;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
 }
 
 .event-detail-title {
@@ -1593,6 +1599,28 @@ select {
     color: var(--text-primary);
     white-space: pre-wrap;
     transition: color 0.5s ease;
+    max-width: 100%;
+    word-wrap: break-word;
+}
+
+.event-detail-description img,
+.custom-field-content img {
+    max-width: 100% !important;
+    height: auto !important;
+    display: block;
+}
+
+.event-detail-description table,
+.custom-field-content table {
+    max-width: 100%;
+    overflow-x: auto;
+    display: block;
+}
+
+.event-detail-description *,
+.custom-field-content * {
+    max-width: 100%;
+    box-sizing: border-box;
 }
 
 /* Responsive styles for detail page */
@@ -1709,6 +1737,8 @@ select {
     display: flex;
     gap: 30px;
     align-items: flex-start;
+    max-width: 100%;
+    box-sizing: border-box;
 }
 
 .event-sidebar {
@@ -1722,6 +1752,7 @@ select {
     border-left: 3px solid var(--accent-yellow);
     display: block !important;
     /* Force display if content exists */
+    box-sizing: border-box;
 }
 
 .event-sidebar-nav {
@@ -1750,6 +1781,9 @@ select {
 .event-main-content {
     flex: 1;
     min-width: 0;
+    max-width: 100%;
+    box-sizing: border-box;
+    overflow-x: hidden;
 }
 
 .custom-field-section {
@@ -1768,6 +1802,9 @@ select {
 
 .custom-field-content {
     line-height: 1.6;
+    max-width: 100%;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
 }
 
 @media (max-width: 768px) {
