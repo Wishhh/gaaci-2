@@ -90,6 +90,37 @@
             margin-bottom: 15px;
         }
 
+        .field-controls {
+            display: flex;
+            gap: 5px;
+            align-items: center;
+        }
+
+        .reorder-buttons {
+            display: flex;
+            gap: 3px;
+        }
+
+        .move-btn {
+            background: #6c757d;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            line-height: 1;
+        }
+
+        .move-btn:hover:not(:disabled) {
+            background: #5a6268;
+        }
+
+        .move-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
         .remove-field-btn {
             background: #dc3545;
             color: white;

@@ -34,6 +34,27 @@ const verifyToken = (req, res, next) => {
     });
 };
 
+// --- AUTHENTICATED ROUTES ---
+
+// Image Upload for TinyMCE
+router.post('/upload-image', verifyToken, upload.single('file'), async (req, res) => {
+    console.log('Upload image route hit!');
+    console.log('Request file:', req.file);
+    console.log('Request body:', req.body);
+    try {
+        if (!req.file) {
+            console.log('No file in request');
+            return res.status(400).json({ error: 'No file uploaded' });
+        }
+        const imageUrl = `/uploads/${req.file.filename}`;
+        console.log('Image uploaded successfully:', imageUrl);
+        return res.json({ location: imageUrl });
+    } catch (err) {
+        console.error('Image upload error:', err);
+        return res.status(500).json({ error: 'Upload failed', message: err.message });
+    }
+});
+
 // --- PUBLIC ROUTES ---
 
 // Get Archive Events (past events) - Must come before /events

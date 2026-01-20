@@ -71,7 +71,13 @@ window.addCustomField = function(data = null) {
         <div class="custom-field-item" data-id="${id}">
             <div class="custom-field-header">
                 <h4>Custom Field</h4>
-                <button type="button" class="remove-field-btn" onclick="removeCustomField(this)">Remove</button>
+                <div class="field-controls">
+                    <div class="reorder-buttons">
+                        <button type="button" class="move-btn" onclick="moveCustomFieldUp(this)" title="Move Up">▲</button>
+                        <button type="button" class="move-btn" onclick="moveCustomFieldDown(this)" title="Move Down">▼</button>
+                    </div>
+                    <button type="button" class="remove-field-btn" onclick="removeCustomField(this)">Remove</button>
+                </div>
             </div>
             <div class="form-group">
                 <label>Field Title (Georgian)</label>
@@ -101,6 +107,32 @@ window.addCustomField = function(data = null) {
             plugins: 'anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount',
             toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table | align lineheight | numlist bullist indent outdent | emoticons charmap | removeformat',
             height: 300,
+            images_upload_url: '/api/upload-image',
+            automatic_uploads: true,
+            images_reuse_filename: false,
+            images_upload_handler: function (blobInfo, progress) {
+                return new Promise((resolve, reject) => {
+                    const formData = new FormData();
+                    formData.append('file', blobInfo.blob(), blobInfo.filename());
+                    
+                    fetch('/api/upload-image', {
+                        method: 'POST',
+                        headers: {
+                            'Authorization': token
+                        },
+                        body: formData
+                    })
+                    .then(response => response.json())
+                    .then(result => {
+                        if (result.location) {
+                            resolve(result.location);
+                        } else {
+                            reject('Upload failed');
+                        }
+                    })
+                    .catch(err => reject(err));
+                });
+            },
             setup: function(editor) {
                 editor.on('init', function() {
                     if (data && data.content_geo) {
@@ -116,12 +148,39 @@ window.addCustomField = function(data = null) {
             plugins: 'anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount',
             toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table | align lineheight | numlist bullist indent outdent | emoticons charmap | removeformat',
             height: 300,
+            images_upload_url: '/api/upload-image',
+            automatic_uploads: true,
+            images_reuse_filename: false,
+            images_upload_handler: function (blobInfo, progress) {
+                return new Promise((resolve, reject) => {
+                    const formData = new FormData();
+                    formData.append('file', blobInfo.blob(), blobInfo.filename());
+                    
+                    fetch('/api/upload-image', {
+                        method: 'POST',
+                        headers: {
+                            'Authorization': token
+                        },
+                        body: formData
+                    })
+                    .then(response => response.json())
+                    .then(result => {
+                        if (result.location) {
+                            resolve(result.location);
+                        } else {
+                            reject('Upload failed');
+                        }
+                    })
+                    .catch(err => reject(err));
+                });
+            },
             setup: function(editor) {
                 editor.on('init', function() {
                     if (data && data.content_eng) {
                         editor.setContent(data.content_eng);
                     }
                     editorInstances[`activity-${id}-eng`] = editor;
+                    updateReorderButtons();
                 });
             }
         });
@@ -144,8 +203,42 @@ window.removeCustomField = function(btn) {
         }
         
         item.remove();
+        updateReorderButtons();
     }
 };
+
+window.moveCustomFieldUp = function(btn) {
+    const item = btn.closest('.custom-field-item');
+    const prevItem = item.previousElementSibling;
+    
+    if (prevItem && prevItem.classList.contains('custom-field-item')) {
+        item.parentNode.insertBefore(item, prevItem);
+        updateReorderButtons();
+    }
+};
+
+window.moveCustomFieldDown = function(btn) {
+    const item = btn.closest('.custom-field-item');
+    const nextItem = item.nextElementSibling;
+    
+    if (nextItem && nextItem.classList.contains('custom-field-item')) {
+        item.parentNode.insertBefore(nextItem, item);
+        updateReorderButtons();
+    }
+};
+
+function updateReorderButtons() {
+    const container = document.getElementById('activity-custom-fields-container');
+    const items = container.querySelectorAll('.custom-field-item');
+    
+    items.forEach((item, index) => {
+        const upBtn = item.querySelector('.move-btn:first-child');
+        const downBtn = item.querySelector('.move-btn:last-child');
+        
+        if (upBtn) upBtn.disabled = (index === 0);
+        if (downBtn) downBtn.disabled = (index === items.length - 1);
+    });
+}
 
 // Load activity data if editing
 async function loadActivityData() {

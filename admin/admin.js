@@ -826,6 +826,32 @@ if (document.getElementById('news-content-geo-container')) {
         plugins: 'anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount',
         toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table | align lineheight | numlist bullist indent outdent | emoticons charmap | removeformat',
         height: 300,
+        images_upload_url: '/api/upload-image',
+        automatic_uploads: true,
+        images_reuse_filename: false,
+        images_upload_handler: function (blobInfo, progress) {
+            return new Promise((resolve, reject) => {
+                const formData = new FormData();
+                formData.append('file', blobInfo.blob(), blobInfo.filename());
+                
+                fetch('/api/upload-image', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': token
+                    },
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(result => {
+                    if (result.location) {
+                        resolve(result.location);
+                    } else {
+                        reject('Upload failed');
+                    }
+                })
+                .catch(err => reject(err));
+            });
+        },
         setup: function(editor) {
             editor.on('init', function() {
                 editorInstances['news-geo'] = editor;
@@ -838,6 +864,32 @@ if (document.getElementById('news-content-geo-container')) {
         plugins: 'anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount',
         toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table | align lineheight | numlist bullist indent outdent | emoticons charmap | removeformat',
         height: 300,
+        images_upload_url: '/api/upload-image',
+        automatic_uploads: true,
+        images_reuse_filename: false,
+        images_upload_handler: function (blobInfo, progress) {
+            return new Promise((resolve, reject) => {
+                const formData = new FormData();
+                formData.append('file', blobInfo.blob(), blobInfo.filename());
+                
+                fetch('/api/upload-image', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': token
+                    },
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(result => {
+                    if (result.location) {
+                        resolve(result.location);
+                    } else {
+                        reject('Upload failed');
+                    }
+                })
+                .catch(err => reject(err));
+            });
+        },
         setup: function(editor) {
             editor.on('init', function() {
                 editorInstances['news-eng'] = editor;
@@ -1378,6 +1430,32 @@ window.addCustomField = (type, data = null) => {
             plugins: 'anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount',
             toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table | align lineheight | numlist bullist indent outdent | emoticons charmap | removeformat',
             height: 300,
+            images_upload_url: '/api/upload-image',
+            automatic_uploads: true,
+            images_reuse_filename: false,
+            images_upload_handler: function (blobInfo, progress) {
+                return new Promise((resolve, reject) => {
+                    const formData = new FormData();
+                    formData.append('file', blobInfo.blob(), blobInfo.filename());
+                    
+                    fetch('/api/upload-image', {
+                        method: 'POST',
+                        headers: {
+                            'Authorization': token
+                        },
+                        body: formData
+                    })
+                    .then(response => response.json())
+                    .then(result => {
+                        if (result.location) {
+                            resolve(result.location);
+                        } else {
+                            reject('Upload failed');
+                        }
+                    })
+                    .catch(err => reject(err));
+                });
+            },
             setup: function(editor) {
                 editor.on('init', function() {
                     if (data && data.content_geo) {
@@ -1393,6 +1471,32 @@ window.addCustomField = (type, data = null) => {
             plugins: 'anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount',
             toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table | align lineheight | numlist bullist indent outdent | emoticons charmap | removeformat',
             height: 300,
+            images_upload_url: '/api/upload-image',
+            automatic_uploads: true,
+            images_reuse_filename: false,
+            images_upload_handler: function (blobInfo, progress) {
+                return new Promise((resolve, reject) => {
+                    const formData = new FormData();
+                    formData.append('file', blobInfo.blob(), blobInfo.filename());
+                    
+                    fetch('/api/upload-image', {
+                        method: 'POST',
+                        headers: {
+                            'Authorization': token
+                        },
+                        body: formData
+                    })
+                    .then(response => response.json())
+                    .then(result => {
+                        if (result.location) {
+                            resolve(result.location);
+                        } else {
+                            reject('Upload failed');
+                        }
+                    })
+                    .catch(err => reject(err));
+                });
+            },
             setup: function(editor) {
                 editor.on('init', function() {
                     if (data && data.content_eng) {
