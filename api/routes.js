@@ -5,16 +5,26 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const multer = require('multer');
 const path = require('path');
+const cloudinary = require('cloudinary').v2;
+const { CloudinaryStorage } = require('multer-storage-cloudinary');
 
-// Multer setup for image uploads
-const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-        cb(null, 'uploads/');
-    },
-    filename: function (req, file, cb) {
-        cb(null, Date.now() + path.extname(file.originalname));
+// Configure Cloudinary
+cloudinary.config({
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+    api_key: process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET
+});
+
+// Multer setup for image uploads with Cloudinary
+const storage = new CloudinaryStorage({
+    cloudinary: cloudinary,
+    params: {
+        folder: 'gaaci-uploads',
+        allowed_formats: ['jpg', 'jpeg', 'png', 'gif', 'webp', 'jfif'],
+        transformation: [{ width: 2000, quality: 'auto' }]
     }
 });
+
 const upload = multer({
     storage: storage,
     limits: {
@@ -46,7 +56,7 @@ router.post('/upload-image', verifyToken, upload.single('file'), async (req, res
             console.log('No file in request');
             return res.status(400).json({ error: 'No file uploaded' });
         }
-        const imageUrl = `/uploads/${req.file.filename}`;
+        const imageUrl = req.file.path;
         console.log('Image uploaded successfully:', imageUrl);
         return res.json({ location: imageUrl });
     } catch (err) {
@@ -311,7 +321,7 @@ router.post('/admin/login', async (req, res) => {
 // Add Event
 router.post('/events', verifyToken, upload.single('image'), async (req, res) => {
     const { title_geo, title_eng, details_geo, details_eng, event_date } = req.body;
-    const image_url = req.file ? `/uploads/${req.file.filename}` : null;
+    const image_url = req.file ? req.file.path : null;
 
     // Debug logging for custom fields
     console.log('Received custom_fields:', req.body.custom_fields);
@@ -369,7 +379,7 @@ router.put('/events/:id', verifyToken, upload.single('image'), async (req, res) 
 
         if (req.file) {
             updateQuery += ', image_url = ?';
-            params.push(`/uploads/${req.file.filename}`);
+            params.push(req.file.path);
         }
 
         updateQuery += ' WHERE id = ?';
@@ -410,7 +420,7 @@ router.get('/upcoming-events', verifyToken, async (req, res) => {
 // Create Upcoming Event
 router.post('/upcoming-events', verifyToken, upload.single('image'), async (req, res) => {
     const { title_geo, title_eng, location_geo, location_eng, start_date, end_date } = req.body;
-    const image_url = req.file ? `/uploads/${req.file.filename}` : null;
+    const image_url = req.file ? req.file.path : null;
 
     try {
         await db.query(
@@ -433,7 +443,7 @@ router.put('/upcoming-events/:id', verifyToken, upload.single('image'), async (r
 
         if (req.file) {
             updateQuery += ', image_url = ?';
-            params.push(`/uploads/${req.file.filename}`);
+            params.push(req.file.path);
         }
 
         updateQuery += ' WHERE id = ?';
@@ -465,7 +475,7 @@ router.delete('/upcoming-events/:id', verifyToken, async (req, res) => {
 // Create Activity
 router.post('/activities', verifyToken, upload.single('image'), async (req, res) => {
     const { title_geo, title_eng, details_geo, details_eng, activity_date } = req.body;
-    const image_url = req.file ? `/uploads/${req.file.filename}` : null;
+    const image_url = req.file ? req.file.path : null;
 
     // Debug logging
     console.log('Received activity custom_fields:', req.body.custom_fields);
@@ -522,7 +532,7 @@ router.put('/activities/:id', verifyToken, upload.single('image'), async (req, r
 
         if (req.file) {
             updateQuery += ', image_url = ?';
-            params.push(`/uploads/${req.file.filename}`);
+            params.push(req.file.path);
         }
 
         updateQuery += ' WHERE id = ?';
@@ -717,7 +727,7 @@ router.get('/employees', async (req, res) => {
 // Create Employee
 router.post('/employees', verifyToken, upload.single('image'), async (req, res) => {
     const { name_geo, name_eng, details_geo, details_eng, order_index } = req.body;
-    const image_url = req.file ? `/uploads/${req.file.filename}` : null;
+    const image_url = req.file ? req.file.path : null;
     try {
         await db.query(
             'INSERT INTO employees (name_geo, name_eng, details_geo, details_eng, image_url, order_index) VALUES (?, ?, ?, ?, ?, ?)',
@@ -739,7 +749,7 @@ router.put('/employees/:id', verifyToken, upload.single('image'), async (req, re
 
         if (req.file) {
             updateQuery += ', image_url = ?';
-            params.push(`/uploads/${req.file.filename}`);
+            params.push(req.file.path);
         }
 
         updateQuery += ' WHERE id = ?';
@@ -840,7 +850,7 @@ router.put('/publications/:id', verifyToken, async (req, res) => {
 // Create News
 router.post('/news', verifyToken, upload.single('image'), async (req, res) => {
     const { title_geo, title_eng, content_geo, content_eng } = req.body;
-    const image_url = req.file ? `/uploads/${req.file.filename}` : null;
+    const image_url = req.file ? req.file.path : null;
 
     try {
         await db.query(
@@ -863,7 +873,7 @@ router.put('/news/:id', verifyToken, upload.single('image'), async (req, res) =>
 
         if (req.file) {
             updateQuery += ', image_url = ?';
-            params.push(`/uploads/${req.file.filename}`);
+            params.push(req.file.path);
         }
 
         updateQuery += ' WHERE id = ?';
