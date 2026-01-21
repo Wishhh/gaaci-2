@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', function () {
     // --- Localization System ---
-    let currentLanguage = 'geo';
+    let currentLanguage = 'eng';
     let translations = {};
     const storedLanguage = localStorage.getItem('gaaci-language');
     if (storedLanguage === 'geo' || storedLanguage === 'eng') {
