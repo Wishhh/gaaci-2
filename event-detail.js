@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', function () {
     // --- Localization System ---
-    let currentLanguage = 'geo';
+    let currentLanguage = 'eng';
     let translations = {};
     let currentEvent = null;
     let eventType = null;
