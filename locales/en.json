@@ -20,6 +20,8 @@
         "sections_title": "Association Sections"
     },
     "footer": {
+        "main": "Main",
+        "about": "About",
         "gallery": "Gallery",
         "membership": "Association Membership",
         "contact": "Contact Information",
